@@ -23,17 +23,23 @@ class InviteTeamMemberTest extends TestCase
 
         Mail::fake();
 
+        // Actúa como el usuario con un equipo personal
         $this->actingAs($user = User::factory()->withPersonalTeam()->create());
 
+        // Realiza la prueba con Livewire
         Livewire::test(TeamMemberManager::class, ['team' => $user->currentTeam])
             ->set('addTeamMemberForm', [
                 'email' => 'test@example.com',
                 'role' => 'admin',
-            ])->call('addTeamMember');
+            ])
+            ->call('addTeamMember');
 
+        // Verifica que la invitación fue enviada
         Mail::assertSent(TeamInvitation::class);
 
-        $this->assertCount(1, $user->currentTeam->fresh()->teamInvitations);
+        // Carga explícitamente las invitaciones del equipo
+        $user->currentTeam->load('teamInvitations');
+        $this->assertCount(1, $user->currentTeam->teamInvitations);
     }
 
     public function test_team_member_invitations_can_be_cancelled(): void
@@ -44,20 +50,25 @@ class InviteTeamMemberTest extends TestCase
 
         Mail::fake();
 
+        // Actúa como el usuario con un equipo personal
         $this->actingAs($user = User::factory()->withPersonalTeam()->create());
 
-        // Add the team member...
+        // Añade al miembro al equipo
         $component = Livewire::test(TeamMemberManager::class, ['team' => $user->currentTeam])
             ->set('addTeamMemberForm', [
                 'email' => 'test@example.com',
                 'role' => 'admin',
-            ])->call('addTeamMember');
+            ])
+            ->call('addTeamMember');
 
-        $invitationId = $user->currentTeam->fresh()->teamInvitations->first()->id;
+        // Obtén la invitación recién creada
+        $user->currentTeam->load('teamInvitations'); // Carga las invitaciones
+        $invitationId = $user->currentTeam->teamInvitations->first()->id;
 
-        // Cancel the team invitation...
+        // Cancela la invitación del equipo
         $component->call('cancelTeamInvitation', $invitationId);
 
-        $this->assertCount(0, $user->currentTeam->fresh()->teamInvitations);
+        // Verifica que la invitación haya sido cancelada
+        $this->assertCount(0, $user->currentTeam->teamInvitations);
     }
 }

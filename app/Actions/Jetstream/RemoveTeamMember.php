@@ -39,6 +39,7 @@ class RemoveTeamMember implements RemovesTeamMembers
 
     /**
      * Ensure that the currently authenticated user does not own the team.
+
      */
     protected function ensureUserDoesNotOwnTeam(User $teamMember, Team $team): void
     {

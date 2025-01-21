@@ -8,6 +8,19 @@ use Laravel\Jetstream\Events\TeamDeleted;
 use Laravel\Jetstream\Events\TeamUpdated;
 use Laravel\Jetstream\Team as JetstreamTeam;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property bool $personal_team
+ * @property-read \App\Models\User $owner
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $members
+ */
+
+/**
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\TeamInvitation[] $teamInvitations
+ */
+
+
 class Team extends JetstreamTeam
 {
     /** @use HasFactory<\Database\Factories\TeamFactory> */
@@ -16,7 +29,7 @@ class Team extends JetstreamTeam
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $fillable = [
         'name',
@@ -61,4 +74,11 @@ class Team extends JetstreamTeam
         return $this->hasMany(User::class, 'current_team_id');
     }
 
+    /**
+     * Obtener las invitaciones del equipo.
+     */
+    public function teamInvitations()
+    {
+        return $this->hasMany(TeamInvitation::class);
+    }
 }

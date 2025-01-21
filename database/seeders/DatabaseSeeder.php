@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Helpers\UserHelper;
+use App\Helpers\VideoHelper;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -21,5 +22,8 @@ class DatabaseSeeder extends Seeder
 
         // Crear el profesor por defecto
         UserHelper::createDefaultTeacher();
+
+        // Crear el video por defecto
+        VideoHelper::createDefaultVideo();
     }
 }

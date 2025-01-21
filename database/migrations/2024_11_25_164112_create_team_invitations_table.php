@@ -9,18 +9,17 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('team_invitations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('team_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('team_id')->constrained()->onDelete('cascade'); // Relación con el equipo
             $table->string('email');
-            $table->string('role')->nullable();
+            $table->string('role');
             $table->timestamps();
-
-            $table->unique(['team_id', 'email']);
         });
     }
+
 
     /**
      * Reverse the migrations.

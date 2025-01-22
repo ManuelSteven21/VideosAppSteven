@@ -66,14 +66,17 @@ class HelpersTest extends TestCase
 
     public function test_can_create_default_video()
     {
-        // Llamamos al helper para crear el video por defecto
-        $video = VideoHelper::createDefaultVideo();
+        // Llamamos al helper para crear los videos por defecto
+        $videos = VideoHelper::createDefaultVideos();
+
+        // Seleccionamos el primer video creado
+        $video = $videos->first();
 
         // Verificamos que el video se haya creado correctamente en la base de datos
         $this->assertDatabaseHas('videos', [
-            'title' => config('videos.default_video.title'),
-            'description' => config('videos.default_video.description'),
-            'url' => config('videos.default_video.url'),
+            'title' => config('videos.video_1.title'),
+            'description' => config('videos.video_1.description'),
+            'url' => config('videos.video_1.url'),
             'series_id' => 1, // Valor esperado manualmente
         ]);
 
@@ -82,6 +85,7 @@ class HelpersTest extends TestCase
         $this->assertNotNull($formattedDate);
         $this->assertEquals(now()->isoFormat('D [de] MMMM [de] YYYY'), $formattedDate);
     }
+
 
 
 

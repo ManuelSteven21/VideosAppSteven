@@ -6,6 +6,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 
+
+/**
+ * App\Models\Video
+ *
+ * @property int $id
+ * @property string $title
+ * @property string $description
+ * @property string $url
+ * @property string|null $previous
+ * @property string|null $next
+ * @property int $series_id
+ * @property \Carbon\Carbon|null $published_at
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ */
+
 class Video extends Model
 {
     use HasFactory;

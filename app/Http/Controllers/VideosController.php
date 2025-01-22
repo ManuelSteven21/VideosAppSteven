@@ -11,19 +11,19 @@ class VideosController extends Controller
      * Muestra la información de un video específico.
      *
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\View\View
      */
     public function show($id)
     {
-        // Busca el vídeo per ID
+        // Busca el vídeo por ID
         $video = Video::find($id);
 
-        // Si el vídeo no existeix, retorna un error 404
+        // Si el vídeo no existe, retorna un error 404
         if (!$video) {
             abort(404, 'Video not found');
         }
 
-        // Retorna la vista del vídeo amb la informació
+        // Retorna la vista del vídeo con la información
         return view('videos.show', compact('video'));
     }
 
@@ -43,12 +43,14 @@ class VideosController extends Controller
             return response()->json(['error' => 'Video not found'], 404);
         }
 
-        // Si no necesitas la relación, simplemente devuelve los datos relacionados al video
-        return response()->json([
-            'id' => $video->id,
-            'title' => $video->title,
-            'description' => $video->description,
-        ]);
-    }
+        // Devuelve una lista ficticia de testers asociados al video
+        // (sustituir este arreglo por la lógica real que desees implementar)
+        $testers = [
+            ['id' => 1, 'name' => 'Tester 1', 'email' => 'tester1@example.com'],
+            ['id' => 2, 'name' => 'Tester 2', 'email' => 'tester2@example.com'],
+        ];
 
+        // Devuelve los testers en formato JSON
+        return response()->json(['testers' => $testers], 200);
+    }
 }

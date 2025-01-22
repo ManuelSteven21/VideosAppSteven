@@ -6,16 +6,62 @@ use App\Models\Video;
 
 class VideoHelper
 {
-    public static function createDefaultVideo()
+    public static function createDefaultVideos()
     {
-        return Video::create([
-            'title' => config('videos.default_video.title'),
-            'description' => config('videos.default_video.description'),
-            'url' => config('videos.default_video.url'),
-            'previous' => config('videos.default_video.previous'),
-            'next' => config('videos.default_video.next'),
+        $videos = [];
+
+        $videos[] = Video::create([
+            'title' => config('videos.video_1.title'),
+            'description' => config('videos.video_1.description'),
+            'url' => config('videos.video_1.url'),
+            'previous' => config('videos.video_1.previous'),
+            'next' => config('videos.video_1.next'),
             'series_id' => 1, // Valor asignado manualmente
             'published_at' => now(), // Fecha actual
         ]);
+
+        $videos[] = Video::create([
+            'title' => config('videos.video_2.title'),
+            'description' => config('videos.video_2.description'),
+            'url' => config('videos.video_2.url'),
+            'previous' => config('videos.video_2.previous'),
+            'next' => config('videos.video_2.next'),
+            'series_id' => 1,
+            'published_at' => now(),
+        ]);
+
+        $videos[] = Video::create([
+            'title' => config('videos.video_3.title'),
+            'description' => config('videos.video_3.description'),
+            'url' => config('videos.video_3.url'),
+            'previous' => config('videos.video_3.previous'),
+            'next' => config('videos.video_3.next'),
+            'series_id' => 1,
+            'published_at' => now(),
+        ]);
+
+        $videos[] = Video::create([
+            'title' => config('videos.video_4.title'),
+            'description' => config('videos.video_4.description'),
+            'url' => config('videos.video_4.url'),
+            'previous' => config('videos.video_4.previous'),
+            'next' => config('videos.video_4.next'),
+            'series_id' => 1,
+            'published_at' => now(),
+        ]);
+
+        $videos[] = Video::create([
+            'title' => config('videos.video_5.title'),
+            'description' => config('videos.video_5.description'),
+            'url' => config('videos.video_5.url'),
+            'previous' => config('videos.video_5.previous'),
+            'next' => config('videos.video_5.next'),
+            'series_id' => 1,
+            'published_at' => now(),
+        ]);
+
+        // Agrega más videos según sea necesario...
+
+        return collect($videos); // Devuelve una colección de videos
     }
 }

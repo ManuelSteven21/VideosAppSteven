@@ -16,13 +16,10 @@ use Laravel\Jetstream\Team as JetstreamTeam;
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\User[] $members
  */
 
-/**
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\TeamInvitation[] $teamInvitations
- */
-
 
 class Team extends JetstreamTeam
 {
+
     /** @use HasFactory<\Database\Factories\TeamFactory> */
     use HasFactory;
 

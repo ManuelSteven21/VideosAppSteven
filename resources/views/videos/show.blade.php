@@ -16,8 +16,15 @@
         </div>
 
         <div class="text-sm text-gray-500">
-            <p>Published on: <span class="text-gray-700">{{ $video->formatted_published_at }}</span></p>
-            <p>Series ID: <span class="text-gray-700">{{ $video->series_id }}</span></p>
+            <p>
+                <span class="font-medium text-gray-700">Published on:</span>
+                <span class="text-gray-800">{{ $video->formatted_published_at }}</span>
+                (<span class="text-gray-600">{{ $video->formatted_for_humans_published_at }}</span>)
+            </p>
+            <p>
+                <span class="font-medium text-gray-700">Series ID:</span>
+                <span class="text-gray-800">{{ $video->series_id }}</span>
+            </p>
         </div>
     </div>
 </x-videos-app-layout>

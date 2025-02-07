@@ -8,6 +8,8 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,7 +18,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->withPersonalTeam()->create();
+        // 🔥 Resetear caché de permisos para evitar problemas
+        app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+        UserHelper::createPermissions();
 
         // Crear el usuario por defecto
         UserHelper::createDefaultUser();
@@ -26,5 +30,10 @@ class DatabaseSeeder extends Seeder
 
         // Crear el video por defecto
         VideoHelper::createDefaultVideos();
+
+        // Crear els usuaris per defecte
+        UserHelper::createSuperAdminUser();
+        UserHelper::createRegularUser();
+        UserHelper::createVideoManagerUser();
     }
 }

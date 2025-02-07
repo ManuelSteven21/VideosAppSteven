@@ -9,6 +9,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property int $id
@@ -21,7 +22,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, HasProfilePhoto, HasTeams, Notifiable, TwoFactorAuthenticatable;
+    use HasApiTokens, HasFactory, HasProfilePhoto, HasTeams, Notifiable, TwoFactorAuthenticatable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -87,5 +88,15 @@ class User extends Authenticatable
     public function getProfilePhotoUrlAttribute(): string
     {
         return $this->getProfilePhotoUrl();
+    }
+
+    public function testedBy()
+    {
+        return $this->hasMany(Test::class, 'user_id');
+    }
+
+    public function isSuperAdmin()
+    {
+        return $this->super_admin; // Retorna true si és super admin
     }
 }

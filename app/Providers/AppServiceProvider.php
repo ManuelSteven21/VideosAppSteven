@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Gate;
 use App\Helpers\UserHelper;
 use App\Models\User;
 use App\Policies\UserPolicy;
+use Spatie\Permission\Models\Permission;
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+
         // Registrar les polítiques d'autorització
         Gate::policy(User::class, UserPolicy::class);
 

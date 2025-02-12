@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Video;
+use Illuminate\Support\Facades\Gate;
+use Tests\Unit\VideosTest;
 
 class VideosController extends Controller
 {
@@ -18,35 +20,19 @@ class VideosController extends Controller
         // Busca el vídeo por ID
         $video = Video::find($id);
 
-        // Si el vídeo no existe, retorna un error 404
         if (!$video) {
-            abort(404, 'Video not found');
+            abort(404); // Return 404 if the video is not found
         }
-
-        // Retorna la vista del vídeo con la información
         return view('videos.show', compact('video'));
     }
 
-    /**
-     * Retorna una lista de testers asociados al video.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function testedBy($id)
+    public function manage()
     {
-        // Busca el vídeo per ID
-        $video = Video::find($id);
+        return view('videos.manage');
+    }
 
-        // Si el vídeo no existeix, retorna un error 404
-        if (!$video) {
-            return response()->json(['error' => 'Video not found'], 404);
-        }
-
-        // Obté els tests associats al vídeo
-        $tests = $video->tests()->get(); // Assumeix que hi ha una relació definida a Video
-
-        // Retorna els tests en format JSON
-        return response()->json(['tests' => $tests], 200);
+    public function testedBy():string
+    {
+        return VideosTest::class;
     }
 }

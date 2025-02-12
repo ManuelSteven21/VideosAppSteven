@@ -11,26 +11,42 @@ use Illuminate\Support\Facades\Gate;
 
 class UserHelper
 {
-    public static function addPersonalTeam(User $user)
+    public static function createPermissions()
     {
-        // Crear l'equip personal per a l'usuari
-        $team = Team::create([
-            'name' => $user->name . "'s Team",
-            'user_id' => $user->id,
-            'personal_team' => true,
-        ]);
+        // Crear permisos
+        $permissions = [
+            'manage videos',
+            'view videos', // Permiso para ver videos
+            'manage users',
+            'manage teams',
+            'manage permissions',
+        ];
 
-        // Assignar l'equip a l'usuari
-        $user->update(['current_team_id' => $team->id]);
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate(['name' => $permission]);
+        }
 
-        // Ens assegurem que el team_id es passi a model_has_roles.
-        // Això ajuda a resoldre l'error de "NOT NULL constraint failed"
-        $user->teams()->attach($team->id);
+        // Crear roles
+        $roles = [
+            'regular' => ['view videos'], // El rol 'regular' debe tener permiso para ver videos
+            'video_manager' => ['manage videos', 'view videos'],
+            'super_admin' => ['manage videos', 'manage users', 'manage teams', 'manage permissions', 'view videos'],
+        ];
 
-        return $team; // Retornem l'equip creat per si volem fer més operacions després
+        foreach ($roles as $roleName => $rolePermissions) {
+            // Crear el rol si no existe
+            $role = Role::firstOrCreate(['name' => $roleName]);
+
+            // Asignar permisos al rol
+            $role->syncPermissions($rolePermissions);
+        }
     }
+
     public static function defineGates()
     {
+        Gate::define('view-videos', function (User $user) {
+            return $user->hasPermissionTo('view videos');
+        });
         Gate::define('manage-videos', function (User $user) {
             return $user->hasPermissionTo('manage videos');
         });
@@ -44,57 +60,42 @@ class UserHelper
         });
 
         Gate::define('manage-permissions', function (User $user) {
-            return $user->isSuperAdmin(); // Només el superadmin pot gestionar permisos
+            return $user->isSuperAdmin();
         });
     }
 
-    public static function createPermissions()
+    public static function assignRoleWithTeam(User $user, $roleName, $teamId)
     {
-        // Crear permisos
-        $permissions = [
-            'manage videos',
-            'manage users',
-            'manage teams',
-            'manage permissions',
-        ];
+        // Verificar si el rol existe
+        $role = Role::where('name', $roleName)->first();
 
-        foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission]);
+        if (!$role) {
+            throw new \Exception("El rol '$roleName' no existe.");
         }
 
-        // Crear rols
-        $roles = [
-            'regular' => ['manage videos'],
-            'video_manager' => ['manage videos', 'manage users'],
-            'super_admin' => ['manage videos', 'manage users', 'manage teams', 'manage permissions'],
-        ];
+        // Asignar el rol al usuario
+        $user->assignRole($role);
 
-        foreach ($roles as $roleName => $rolePermissions) {
-            // Crear el rol si no existeix
-            $role = Role::firstOrCreate(['name' => $roleName]);
-
-            // Assignar permisos al rol
-            $role->syncPermissions($rolePermissions);
-        }
+        // Actualizar el team_id en la tabla model_has_roles
+        \DB::table('model_has_roles')
+            ->where('role_id', $role->id)
+            ->where('model_id', $user->id)
+            ->update(['current_team_id' => $teamId]);
     }
 
-//    public static function createDefaultUser()
-//    {
-//        // Crear l'usuari per defecte
-//        $user = User::create([
-//            'name' => config('users.default_user.name'),
-//            'email' => config('users.default_user.email'),
-//            'password' => Hash::make(config('users.default_user.password')),
-//        ]);
-//
-//        // Afegir equip personal
-//        $team = self::addPersonalTeam($user);
-//
-//        // Assignar el rol amb el team_id
-//        $user->assignRole('regular', $team->id);
-//
-//        return $user;
-//    }
+    public static function addPersonalTeam(User $user)
+    {
+        $team = Team::create([
+            'name' => $user->name . "'s Team",
+            'user_id' => $user->id,
+            'personal_team' => true,
+        ]);
+
+        $user->update(['current_team_id' => $team->id]);
+        $user->teams()->attach($team->id);
+
+        return $team;
+    }
 
     public static function createDefaultUser()
     {
@@ -109,14 +110,8 @@ class UserHelper
 
         // ⚠️ Establecer el contexto de equipo ANTES de asignar roles
         app(\Spatie\Permission\PermissionRegistrar::class)->setPermissionsTeamId($team->id);
+        self::assignRoleWithTeam($user, 'regular', $team->id);
 
-        // 🛠️ Asegurar que el rol existe antes de asignarlo
-        $role = Role::where('name', 'regular')->first();
-        if ($role) {
-            $user->assignRole($role);
-        } else {
-            throw new \Exception("El rol 'regular' no existe en la base de datos.");
-        }
 
         return $user;
     }
@@ -134,12 +129,7 @@ class UserHelper
         $team = self::addPersonalTeam($teacher); // Ara utilitzem la funció reutilitzable
         app(\Spatie\Permission\PermissionRegistrar::class)->setPermissionsTeamId($team->id);
         // 🛠️ Asegurar que el rol existe antes de asignarlo
-        $role = Role::where('name', 'super_admin')->first();
-        if ($role) {
-            $teacher->assignRole($role);
-        } else {
-            throw new \Exception("El rol 'regular' no existe en la base de datos.");
-        }
+        self::assignRoleWithTeam($teacher, 'super_admin', $team->id);
 
         return $teacher;
     }
@@ -155,12 +145,7 @@ class UserHelper
         $team = self::addPersonalTeam($user);
         app(\Spatie\Permission\PermissionRegistrar::class)->setPermissionsTeamId($team->id);
         // 🛠️ Asegurar que el rol existe antes de asignarlo
-        $role = Role::where('name', 'regular')->first();
-        if ($role) {
-            $user->assignRole($role);
-        } else {
-            throw new \Exception("El rol 'regular' no existe en la base de datos.");
-        }
+        self::assignRoleWithTeam($user, 'regular', $team->id);
 
         return $user;
     }
@@ -175,12 +160,7 @@ class UserHelper
 
         $team = self::addPersonalTeam($user);
         app(\Spatie\Permission\PermissionRegistrar::class)->setPermissionsTeamId($team->id);
-        $role = Role::where('name', 'video_manager')->first();
-        if ($role) {
-            $user->assignRole($role);
-        } else {
-            throw new \Exception("El rol 'regular' no existe en la base de datos.");
-        }
+        self::assignRoleWithTeam($user, 'video_manager', $team->id);
 
 
         return $user;
@@ -197,12 +177,8 @@ class UserHelper
 
         $team = self::addPersonalTeam($user);
         app(\Spatie\Permission\PermissionRegistrar::class)->setPermissionsTeamId($team->id);
-        $role = Role::where('name', 'super_admin')->first();
-        if ($role) {
-            $user->assignRole($role);
-        } else {
-            throw new \Exception("El rol 'regular' no existe en la base de datos.");
-        }
+        self::assignRoleWithTeam($user, 'super_admin', $team->id);
+
 
         return $user;
     }

@@ -10,6 +10,8 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Tests\Unit\UserTest;
+use Tests\Unit\VideosTest;
 
 /**
  * @property int $id
@@ -92,11 +94,11 @@ class User extends Authenticatable
 
     public function testedBy()
     {
-        return $this->hasMany(Test::class, 'user_id');
+        return UserTest::class;
     }
 
-    public function isSuperAdmin()
+    public function isSuperAdmin(): bool
     {
-        return $this->super_admin; // Retorna true si és super admin
+        return (bool) $this->super_admin;
     }
 }

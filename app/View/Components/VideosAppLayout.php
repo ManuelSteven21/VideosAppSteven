@@ -9,20 +9,21 @@ use Illuminate\View\Component;
 class VideosAppLayout extends Component
 {
     /**
-     * El títol de la pàgina.
+     * Create a new component instance.
      */
-    public $title;
-
-    public function __construct($title = null)
+    public function __construct()
     {
-        $this->title = $title;
+        //
     }
 
     /**
-     * Retorna la vista del layout.
+     * Get the view / contents that represent the component.
      */
-    public function render(): View|Closure|string
+    public function render(): View
     {
-        return view('components.videos-app-layout');
+        /** @var view-string $view */
+        $view = 'components.videos-app-layout';
+
+        return view($view);
     }
 }

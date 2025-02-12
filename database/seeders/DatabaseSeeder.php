@@ -16,24 +16,21 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
-    public function run(): void
+    function run(): void
     {
-        // 🔥 Resetear caché de permisos para evitar problemas
+        // Resetear caché de permisos para evitar problemas
         app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+
+        // Crear permisos y roles
         UserHelper::createPermissions();
 
-        // Crear el usuario por defecto
+        // Crear usuarios por defecto
         UserHelper::createDefaultUser();
-
-        // Crear el profesor por defecto
         UserHelper::createDefaultTeacher();
-
-        // Crear el video por defecto
-        VideoHelper::createDefaultVideos();
-
-        // Crear els usuaris per defecte
         UserHelper::createSuperAdminUser();
         UserHelper::createRegularUser();
         UserHelper::createVideoManagerUser();
+        // Crear el video por defecto
+        VideoHelper::createDefaultVideos();
     }
 }

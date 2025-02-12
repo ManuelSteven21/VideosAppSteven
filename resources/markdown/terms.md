@@ -76,5 +76,53 @@ S'han implementat diversos tests per assegurar la funcionalitat dels vídeos:
 
 ---
 
+## **Desenvolupament del 3r Sprint**
+
+### Correcció d'Errors
+- Correcció dels errors detectats en el segon sprint.
+
+### Instal·lació de Paquets
+- Instal·lació del paquet `spatie/laravel-permission`. [Documentació](https://spatie.be/docs/laravel-permission/v6/installation-laravel).
+### Migracions
+- Creació d'una migració per afegir el camp `super_admin` a la taula d'usuaris.
+
+## Desenvolupament
+### Model d'Usuaris
+- Afegida la funció `testedBy()`.
+- Afegida la funció `isSuperAdmin()`.
+
+### Helpers
+- Modificada la funció `create_default_professor()` per incloure `superadmin` al professor.
+- Creada la funció `add_personal_team()` per separar la creació dels equips dels usuaris.
+
+### Creació d'Usuaris per Defecte
+- **Regular User:** `create_regular_user()` (`regular@videosapp.com`, `123456789`).
+- **Video Manager:** `create_video_manager_user()` (`videosmanager@videosapp.com`, `123456789`).
+- **Super Admin:** `create_superadmin_user()` (`superadmin@videosapp.com`, `123456789`).
+
+### Definició de Gates i Permisos
+- Creació de les funcions `define_gates()` i `create_permissions()`.
+### Registre de Polítiques d'Autorització
+- A `AppServiceProvider`, registre de les polítiques d'autorització i definició de les portes d'accés (`gates`).
+### DatabaseSeeder
+- Assignació per defecte dels permisos i usuaris (`superadmin`, `regular user`, `video manager`).
+
+### Publicació de Stubs
+- Publicació dels `stubs`. [Referència](https://laravel-news.com/customizing-stubs-in-laravel).
+
+### Feature Tests
+- **VideosManageControllerTest (tests/Feature/Videos):**
+    - `user_with_permissions_can_manage_videos()`
+    - `regular_users_cannot_manage_videos()`
+    - `guest_users_cannot_manage_videos()`
+    - `superadmins_can_manage_videos()`
+    - `loginAsVideoManager()`
+    - `loginAsSuperAdmin()`
+    - `loginAsRegularUser()`
+
+### Unit Tests
+- **UserTest (tests/Unit):**
+    - Creació de la funció `isSuperAdmin()`.
+
 ## **Conclusió**
 Aquest projecte ha estat un exercici complet que ha cobert la configuració inicial, gestió d'usuaris i vídeos, treball amb dates formatades, i l'ús de components, helpers, layouts i tests per garantir el bon funcionament de l'aplicació.

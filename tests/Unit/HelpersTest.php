@@ -12,6 +12,14 @@ class HelpersTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Crear permisos i rols abans de cada test
+        UserHelper::createPermissions();
+    }
+
     public function test_can_create_default_user()
     {
         // Llamamos al helper para crear el usuario por defecto
@@ -21,7 +29,7 @@ class HelpersTest extends TestCase
         $this->assertDatabaseHas('users', [
             'name' => config('users.default_user.name'),
             'email' => config('users.default_user.email'),
-            'current_team_id' => $user->current_team_id, // Usamos el equipo asignado dinámicamente
+            'current_team_id' => $user->current_team_id,
         ]);
 
         // Verificamos que la contraseña almacenada sea válida
@@ -47,7 +55,7 @@ class HelpersTest extends TestCase
         $this->assertDatabaseHas('users', [
             'name' => config('users.default_teacher.name'),
             'email' => config('users.default_teacher.email'),
-            'current_team_id' => $teacher->current_team_id, // Usamos el equipo asignado dinámicamente
+            'current_team_id' => $teacher->current_team_id,
         ]);
 
         // Verificamos que la contraseña almacenada sea válida
@@ -77,7 +85,7 @@ class HelpersTest extends TestCase
             'title' => config('videos.video_1.title'),
             'description' => config('videos.video_1.description'),
             'url' => config('videos.video_1.url'),
-            'series_id' => 1, // Valor esperado manualmente
+            'series_id' => 1,
         ]);
 
         // Verificamos el formato personalizado de la fecha publicada
@@ -85,8 +93,4 @@ class HelpersTest extends TestCase
         $this->assertNotNull($formattedDate);
         $this->assertEquals(now()->isoFormat('D [de] MMMM [de] YYYY'), $formattedDate);
     }
-
-
-
-
 }

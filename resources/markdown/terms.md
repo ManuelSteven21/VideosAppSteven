@@ -1,6 +1,6 @@
 # Guia del projecte VideosAppSteven
 
-**Benvinguts al projecte VideosAppSteven**, una aplicació desenvolupada per gestionar i visualitzar vídeos utilitzant el framework Laravel. Aquest document explica breument l'objectiu del projecte i les funcionalitats desenvolupades durant el **1r sprint** i el **2n sprint**.
+**Benvinguts al projecte VideosAppSteven**, una aplicació desenvolupada per gestionar i visualitzar vídeos utilitzant el framework Laravel. Aquest document explica breument l'objectiu del projecte i les funcionalitats desenvolupades durant el **1r sprint**, **2n sprint** i **3r sprint**.
 
 ---
 
@@ -110,6 +110,7 @@ S'han implementat diversos tests per assegurar la funcionalitat dels vídeos:
 ### Publicació de Stubs
 - Publicació dels `stubs`. [Referència](https://laravel-news.com/customizing-stubs-in-laravel).
 
+## **Desenvolupament del 4t Sprint**
 ### Feature Tests
 - **VideosManageControllerTest (tests/Feature/Videos):**
     - `user_with_permissions_can_manage_videos()`
@@ -119,10 +120,21 @@ S'han implementat diversos tests per assegurar la funcionalitat dels vídeos:
     - `loginAsVideoManager()`
     - `loginAsSuperAdmin()`
     - `loginAsRegularUser()`
+    - `user_with_permissions_can_see_add_videos()`
+    - `user_without_videos_manage_create_cannot_see_add_videos()`
+    - `user_with_permissions_can_store_videos()`
+    - `user_without_permissions_cannot_store_videos()`
+    - `user_with_permissions_can_destroy_videos()`
+    - `user_without_permissions_cannot_destroy_videos()`
+    - `user_with_permissions_can_see_edit_videos()`
+    - `user_without_permissions_cannot_see_edit_videos()`
+    - `user_with_permissions_can_update_videos()`
+    - `user_without_permissions_cannot_update_videos()`
 
-### Unit Tests
-- **UserTest (tests/Unit):**
-    - Creació de la funció `isSuperAdmin()`.
+### Creació del CRUD
+- S'ha creat el CRUD complet per a la gestió de vídeos amb les vistes, permisos i middleware corresponent.
+- Afegit navbar i footer a la plantilla principal.
+- Implementació de la vista de l'índex amb la visualització de vídeos.
 
 ## **Conclusió**
 Aquest projecte ha estat un exercici complet que ha cobert la configuració inicial, gestió d'usuaris i vídeos, treball amb dates formatades, i l'ús de components, helpers, layouts i tests per garantir el bon funcionament de l'aplicació.

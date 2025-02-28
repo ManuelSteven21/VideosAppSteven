@@ -82,4 +82,21 @@ class Video extends Model
         }
         return null;
     }
+
+    public function getPrevious()
+    {
+        return Video::where('id', '<', $this->id)->orderBy('id', 'desc')->first();
+    }
+
+    public function getNext()
+    {
+        return Video::where('id', '>', $this->id)->orderBy('id', 'asc')->first();
+    }
+
+    public function getUrlIdAttribute()
+    {
+        // Suponiendo que la URL del iframe es algo como 'https://www.youtube.com/embed/VIDEO_ID'
+        return preg_match('/embed\/([^\?&]+)/', $this->attributes['url'], $matches) ? $matches[1] : null;
+    }
+
 }

@@ -8,65 +8,71 @@ use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class UserHelper
 {
     public static function createPermissions()
     {
+        \Log::info('Current Database Connection: ' . DB::connection()->getDatabaseName());
         // Crear permisos
         $permissions = [
-            'manage videos',
-            'view videos', // Permiso para ver videos
-            'manage users',
-            'manage teams',
-            'manage permissions',
+            'manage-videos',
+            'view-videos',
+            'manage-users',
+            'manage-teams',
+            'manage-permissions',
         ];
 
         foreach ($permissions as $permission) {
             Permission::firstOrCreate(['name' => $permission]);
         }
 
-        // Crear roles
+        // Limpiar caché de permisos
+        app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+
+        // Crear roles y asignar permisos
         $roles = [
-            'regular' => ['view videos'], // El rol 'regular' debe tener permiso para ver videos
-            'video_manager' => ['manage videos', 'view videos'],
-            'super_admin' => ['manage videos', 'manage users', 'manage teams', 'manage permissions', 'view videos'],
+            'regular' => ['view-videos'],
+            'video_manager' => ['manage-videos', 'view-videos'],
+            'super_admin' => [
+                'manage-videos', 'manage-users',
+                'manage-teams', 'manage-permissions',
+                'view-videos'
+            ],
         ];
 
         foreach ($roles as $roleName => $rolePermissions) {
-            // Crear el rol si no existe
             $role = Role::firstOrCreate(['name' => $roleName]);
-
-            // Asignar permisos al rol
             $role->syncPermissions($rolePermissions);
         }
+
+        // Limpiar caché de permisos nuevamente
+        app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
     }
 
     public static function defineGates()
     {
         Gate::define('view-videos', function (User $user) {
-            return $user->hasPermissionTo('view videos');
+            return $user->hasPermissionTo('view-videos');
         });
         Gate::define('manage-videos', function (User $user) {
-            return $user->hasPermissionTo('manage videos');
+            return $user->hasPermissionTo('manage-videos');
         });
-
         Gate::define('manage-users', function (User $user) {
-            return $user->hasPermissionTo('manage users');
+            return $user->hasPermissionTo('manage-users');
         });
-
         Gate::define('manage-teams', function (User $user) {
-            return $user->hasPermissionTo('manage teams');
+            return $user->hasPermissionTo('manage-teams');
         });
-
         Gate::define('manage-permissions', function (User $user) {
             return $user->isSuperAdmin();
         });
     }
 
-    public static function assignRoleWithTeam(User $user, $roleName, $teamId)
+    public static function assignRole(User $user, $roleName)
     {
-        // Verificar si el rol existe
         $role = Role::where('name', $roleName)->first();
 
         if (!$role) {
@@ -74,14 +80,13 @@ class UserHelper
         }
 
         // Asignar el rol al usuario
-        $user->assignRole($role);
+        $user->syncRoles([$role]);
 
-        // Actualizar el team_id en la tabla model_has_roles
-        \DB::table('model_has_roles')
-            ->where('role_id', $role->id)
-            ->where('model_id', $user->id)
-            ->update(['current_team_id' => $teamId]);
+        // Asignar permisos al usuario
+        $permissions = $role->permissions;
+        $user->syncPermissions($permissions);
     }
+
 
     public static function addPersonalTeam(User $user)
     {
@@ -106,12 +111,10 @@ class UserHelper
         ]);
 
         // Crear equipo personal y asignarlo al usuario
-        $team = self::addPersonalTeam($user);
+        self::addPersonalTeam($user);
 
-        // ⚠️ Establecer el contexto de equipo ANTES de asignar roles
-        app(\Spatie\Permission\PermissionRegistrar::class)->setPermissionsTeamId($team->id);
-        self::assignRoleWithTeam($user, 'regular', $team->id);
-
+        // Establecer el contexto de equipo ANTES de asignar roles
+        self::assignRole($user, 'regular');
 
         return $user;
     }
@@ -119,19 +122,18 @@ class UserHelper
     public static function createDefaultTeacher()
     {
         // Crear el usuario
-        $teacher = User::create([
+        $user = User::create([
             'name' => config('users.default_teacher.name'),
             'email' => config('users.default_teacher.email'),
             'password' => Hash::make(config('users.default_teacher.password')),
-            'super_admin' => true, // Li donem permisos de superadmin
+            'super_admin' => true, // Permisos de superadmin
         ]);
 
-        $team = self::addPersonalTeam($teacher); // Ara utilitzem la funció reutilitzable
-        app(\Spatie\Permission\PermissionRegistrar::class)->setPermissionsTeamId($team->id);
-        // 🛠️ Asegurar que el rol existe antes de asignarlo
-        self::assignRoleWithTeam($teacher, 'super_admin', $team->id);
+        self::addPersonalTeam($user);
 
-        return $teacher;
+        self::assignRole($user, 'super_admin');
+
+        return $user;
     }
 
     public static function createRegularUser()
@@ -142,10 +144,10 @@ class UserHelper
             'password' => Hash::make('123456789'),
         ]);
 
-        $team = self::addPersonalTeam($user);
-        app(\Spatie\Permission\PermissionRegistrar::class)->setPermissionsTeamId($team->id);
-        // 🛠️ Asegurar que el rol existe antes de asignarlo
-        self::assignRoleWithTeam($user, 'regular', $team->id);
+        self::addPersonalTeam($user);
+
+        // Establecer el contexto de equipo ANTES de asignar roles
+        self::assignRole($user, 'regular');
 
         return $user;
     }
@@ -158,10 +160,9 @@ class UserHelper
             'password' => Hash::make('123456789'),
         ]);
 
-        $team = self::addPersonalTeam($user);
-        app(\Spatie\Permission\PermissionRegistrar::class)->setPermissionsTeamId($team->id);
-        self::assignRoleWithTeam($user, 'video_manager', $team->id);
+        self::addPersonalTeam($user);
 
+        self::assignRole($user, 'video_manager');
 
         return $user;
     }
@@ -172,13 +173,12 @@ class UserHelper
             'name' => 'Super Admin',
             'email' => 'superadmin@videosapp.com',
             'password' => Hash::make('123456789'),
-            'super_admin' => true, // Assegurem que és superadmin
+            'super_admin' => true, // Asegurar que es superadmin
         ]);
 
-        $team = self::addPersonalTeam($user);
-        app(\Spatie\Permission\PermissionRegistrar::class)->setPermissionsTeamId($team->id);
-        self::assignRoleWithTeam($user, 'super_admin', $team->id);
+        self::addPersonalTeam($user);
 
+        self::assignRole($user, 'super_admin');
 
         return $user;
     }

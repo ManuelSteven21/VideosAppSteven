@@ -19,12 +19,12 @@ use Tests\Unit\VideosTest;
  * @property string $profile_photo_url
  * @property-read \App\Models\Team|null $team
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Team[] $ownedTeams
- * @method string getProfilePhotoUrl() Devuelve la URL de la foto de perfil
  */
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, HasProfilePhoto, HasTeams, Notifiable, TwoFactorAuthenticatable, HasRoles;
+    use HasApiTokens, HasFactory, HasProfilePhoto, HasTeams, Notifiable, TwoFactorAuthenticatable;
+    use HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -72,25 +72,16 @@ class User extends Authenticatable
         ];
     }
 
-    public function team()
-    {
-        return $this->belongsTo(Team::class, 'current_team_id');
-    }
+//    public function team()
+//    {
+//        return $this->belongsTo(Team::class, 'current_team_id');
+//    }
 
     public function ownedTeams()
     {
         return $this->hasMany(Team::class, 'user_id');
     }
 
-    /**
-     * Get the profile photo URL.
-     *
-     * @return string
-     */
-    public function getProfilePhotoUrlAttribute(): string
-    {
-        return $this->getProfilePhotoUrl();
-    }
 
     public function testedBy()
     {

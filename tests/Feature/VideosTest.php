@@ -43,11 +43,8 @@ class VideosTest extends TestCase
         $response->assertViewHas('video', $video);
     }
 
-    public function test_users_cannot_view_not_existing_videos()
+    public function test_users_cannot_view_non_existing_videos()
     {
-        // Autenticar l'usuari teacher
-        $this->actingAs($this->teacher);
-
         // Fer la petició per veure un vídeo que no existeix
         $response = $this->get(route('videos.show', 9999));
 

@@ -10,28 +10,44 @@ use Tests\Unit\VideosTest;
 class VideosController extends Controller
 {
     /**
-     * Muestra la información de un video específico.
+     * Llista tots els vídeos disponibles.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function index()
+    {
+        // Obtenir tots els vídeos ordenats per data de publicació (més recents primer)
+        $videos = Video::orderBy('published_at', 'desc')->get();
+
+        // Retornar la vista amb els vídeos
+        return view('videos.index', compact('videos'));
+    }
+
+    /**
+     * Mostra la informació d'un vídeo específic.
      *
      * @param int $id
      * @return \Illuminate\View\View
      */
     public function show($id)
     {
-        // Busca el vídeo por ID
-        $video = Video::find($id);
+        $video = Video::findOrFail($id);
+        $previous = $video->getPrevious();
+        $next = $video->getNext();
 
         if (!$video) {
-            abort(404); // Return 404 if the video is not found
+            abort(404); // Retorna un error 404 si no es troba el vídeo
         }
-        return view('videos.show', compact('video'));
+        return view('videos.show', compact('video', 'previous', 'next'));
     }
 
-    public function manage()
-    {
-        return view('videos.manage');
-    }
 
-    public function testedBy():string
+    /**
+     * Retorna la classe de test.
+     *
+     * @return string
+     */
+    public function testedBy(): string
     {
         return VideosTest::class;
     }

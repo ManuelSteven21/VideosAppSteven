@@ -10,7 +10,7 @@ return [
     'default_teacher' => [
         'name' => env('DEFAULT_TEACHER_NAME', 'Batman'),
         'email' => env('DEFAULT_TEACHER_EMAIL', 'batman@iesebre.com'),
-        'password' => env('DEFAULT_TEACHER_PASSWORD', 'TheDarkKnight'),
+        'password' => env('DEFAULT_TEACHER_PASSWORD', 'Thechosenone.21'),
         'current_team_id' => env('DEFAULT_TEACHER_CURRENT_TEAM_ID', 2),
     ],
 ];

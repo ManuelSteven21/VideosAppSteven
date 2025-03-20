@@ -30,11 +30,10 @@ return [
     */
 
     'connections' => [
-
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DB_URL'),
-            'database' => database_path('database.sqlite'),
+            'database' => env('DB_DATABASE', ':memory:'),  // Cambié esto a ':memory:'
             'prefix' => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
             'busy_timeout' => null,
@@ -42,7 +41,8 @@ return [
             'synchronous' => null,
         ],
 
-        'mysql' => [
+
+    'mysql' => [
             'driver' => 'mysql',
             'url' => env('DB_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),

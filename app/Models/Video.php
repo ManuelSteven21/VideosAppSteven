@@ -35,7 +35,10 @@ class Video extends Model
         'next',
         'series_id', // Asegúrate de incluir este campo
         'published_at',   // Fecha de publicación
+        'user_id',
     ];
+
+
 
     /**
      * Indica que el campo 'published_at' debe ser tratado como una fecha.
@@ -99,4 +102,13 @@ class Video extends Model
         return preg_match('/embed\/([^\?&]+)/', $this->attributes['url'], $matches) ? $matches[1] : null;
     }
 
+    /**
+     * Relació: Un vídeo pertany a un usuari.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

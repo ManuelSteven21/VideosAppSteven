@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Models\User;
 use App\Models\Video;
 use Carbon\Carbon;
 use Tests\TestCase;
@@ -14,17 +15,17 @@ class VideosTest extends TestCase
 
     public function test_can_get_formatted_published_at_date()
     {
-        // Configurar idioma a espanyol
         Carbon::setLocale('es');
 
-        // Crear un vídeo amb una data de publicació
+        $user = User::factory()->create();
         $video = Video::factory()->create([
             'published_at' => Carbon::parse('2025-01-17 14:00:00'),
+            'user_id' => $user->id, // Afegir user_id
         ]);
 
-        // Comprovar que el format és correcte
         $this->assertEquals('17 de enero de 2025', $video->formatted_published_at);
     }
+
 
 
     public function test_can_get_formatted_published_at_date_when_not_published()

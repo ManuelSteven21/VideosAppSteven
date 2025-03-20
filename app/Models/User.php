@@ -12,6 +12,8 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Tests\Unit\UserTest;
 use Tests\Unit\VideosTest;
+use App\Models\Video;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $id
@@ -36,6 +38,7 @@ class User extends Authenticatable
         'email',
         'password',
         'current_team_id',
+        'super_admin'
     ];
 
     /**
@@ -91,5 +94,10 @@ class User extends Authenticatable
     public function isSuperAdmin(): bool
     {
         return (bool) $this->super_admin;
+    }
+
+    public function videos(): HasMany
+    {
+        return $this->hasMany(Video::class); // Asegúrate de que exista el modelo Video
     }
 }

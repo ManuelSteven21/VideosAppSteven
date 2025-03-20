@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use App\Models\Video;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Faker\Generator as Faker;
@@ -21,6 +22,7 @@ class VideoFactory extends Factory
             'next' => null,
             'series_id' => 1, // Suponiendo que tienes una serie
             'published_at' => Carbon::now(),
+            'user_id' => User::factory(),
         ];
     }
 }

@@ -6,6 +6,7 @@ use App\Models\Video;
 
 class VideoHelper
 {
+
     public static function createDefaultVideos()
     {
         $videos = [];
@@ -18,6 +19,7 @@ class VideoHelper
             'next' => config('videos.video_1.next'),
             'series_id' => 1, // Valor asignado manualmente
             'published_at' => now(), // Fecha actual
+            'user_id' => 5, // usuari administrador de videos
         ]);
 
         $videos[] = Video::create([
@@ -28,6 +30,7 @@ class VideoHelper
             'next' => config('videos.video_2.next'),
             'series_id' => 1,
             'published_at' => now(),
+            'user_id' => 5, // usuari administrador de videos
         ]);
 
         $videos[] = Video::create([
@@ -38,6 +41,7 @@ class VideoHelper
             'next' => config('videos.video_3.next'),
             'series_id' => 1,
             'published_at' => now(),
+            'user_id' => 5, // usuari administrador de videos
         ]);
 
         $videos[] = Video::create([
@@ -48,6 +52,7 @@ class VideoHelper
             'next' => config('videos.video_4.next'),
             'series_id' => 1,
             'published_at' => now(),
+            'user_id' => 5, // usuari administrador de videos
         ]);
 
         $videos[] = Video::create([
@@ -58,6 +63,7 @@ class VideoHelper
             'next' => config('videos.video_5.next'),
             'series_id' => 1,
             'published_at' => now(),
+            'user_id' => 5, // usuari administrador de videos
         ]);
 
         // Agrega más videos según sea necesario...

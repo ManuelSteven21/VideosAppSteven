@@ -16,7 +16,7 @@ class VideosManageControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->artisan('migrate:fresh');
+//        $this->artisan('migrate:fresh');
         UserHelper::createPermissions();
         $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
     }
@@ -103,11 +103,13 @@ class VideosManageControllerTest extends TestCase
         $this->actingAs($user)
             ->post(route('videos.manage.store'), [
                 'title' => 'Test Video',
-                'description' => 'Test Description', // Afegir aquest camp
+                'description' => 'Test Description',
                 'url' => 'http://example.com',
                 'series_id' => 1,
+                'user_id' => $user->id, // Afegir user_id aquí
             ])->assertRedirect(route('videos.manage.index'));
     }
+
 
     #[Test]
     public function user_without_permissions_cannot_store_videos()

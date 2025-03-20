@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\Video;
+use App\Models\User;
 use App\Helpers\UserHelper;
 
 class VideosTest extends TestCase
@@ -28,16 +29,13 @@ class VideosTest extends TestCase
 
     public function test_users_can_view_videos()
     {
-        // Autenticar l'usuari teacher
         $this->actingAs($this->teacher);
 
-        // Crear un vídeo
-        $video = Video::factory()->create();
+        $user = User::factory()->create(); // Crear un usuari de prova
+        $video = Video::factory()->create(['user_id' => $user->id]); // Assegurar-se que tingui user_id
 
-        // Fer la petició per veure el vídeo
         $response = $this->get(route('videos.show', $video->id));
 
-        // Verificar que la resposta és correcta
         $response->assertStatus(200);
         $response->assertViewIs('videos.show');
         $response->assertViewHas('video', $video);

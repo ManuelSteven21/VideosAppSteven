@@ -136,5 +136,108 @@ S'han implementat diversos tests per assegurar la funcionalitat dels vídeos:
 - Afegit navbar i footer a la plantilla principal.
 - Implementació de la vista de l'índex amb la visualització de vídeos.
 
+## Desenvolupament del 5è Sprint
+
+### Correccions i Millores
+
+- Corregir els errors del 4t sprint.
+- Afegir el camp `user_id` a la taula de vídeos perquè es guardi l’usuari que l’ha afegit.
+- Modificar el **controller**, **model** i **helpers** per suportar aquest canvi.
+- Corregir qualsevol test d’sprints anteriors que falli a causa d’aquest canvi.
+
+### UsersManageController
+
+- Crear el **UsersManageController** amb les funcions:
+    - `testedBy`
+    - `index`
+    - `store`
+    - `edit`
+    - `update`
+    - `delete`
+    - `destroy`
+
+### UsersController
+
+- Crear les funcions:
+    - `index`
+    - `show`
+
+### Vistes del CRUD d’Usuaris
+
+Només poden veure-les els usuaris amb permisos adequats.
+
+- `resources/views/users/manage/index.blade.php`
+- `resources/views/users/manage/create.blade.php`
+- `resources/views/users/manage/edit.blade.php`
+- `resources/views/users/manage/delete.blade.php`
+
+#### Detalls de les vistes:
+
+- **index.blade.php**: afegir la taula del CRUD d’usuaris.
+- **create.blade.php**: afegir el formulari per afegir usuaris, utilitzant l’atribut `data-qa` per facilitar els tests.
+- **edit.blade.php**: afegir la taula del CRUD d’usuaris.
+- **delete.blade.php**: afegir la confirmació d’eliminació de l’usuari.
+
+### Vista General d’Usuaris
+
+- Crear la vista `resources/views/users/index.blade.php` on:
+    - Es vegin tots els usuaris.
+    - Es pugui cercar un usuari.
+    - En clicar-hi, es mostri el detall de l’usuari i els seus vídeos.
+
+### Helpers
+
+- Crear els permisos per a la gestió d’usuaris (CRUD).
+- Assignar aquests permisos als **superadmins**.
+
+### Feature Tests
+
+#### UsersTest
+
+Afegir els tests següents:
+
+- `user_without_permissions_can_see_default_users_page`
+- `user_with_permissions_can_see_default_users_page`
+- `not_logged_users_cannot_see_default_users_page`
+- `user_without_permissions_can_see_user_show_page`
+- `user_with_permissions_can_see_user_show_page`
+- `not_logged_users_cannot_see_user_show_page`
+
+#### UsersManageControllerTest
+
+Afegir els tests següents:
+
+- `loginAsVideoManager`
+- `loginAsSuperAdmin`
+- `loginAsRegularUser`
+- `user_with_permissions_can_see_add_users`
+- `user_without_users_manage_create_cannot_see_add_users`
+- `user_with_permissions_can_store_users`
+- `user_without_permissions_cannot_store_users`
+- `user_with_permissions_can_destroy_users`
+- `user_without_permissions_cannot_destroy_users`
+- `user_with_permissions_can_see_edit_users`
+- `user_without_permissions_cannot_see_edit_users`
+- `user_with_permissions_can_update_users`
+- `user_without_permissions_cannot_update_users`
+- `user_with_permissions_can_manage_users`
+- `regular_users_cannot_manage_users`
+- `guest_users_cannot_manage_users`
+- `superadmins_can_manage_users`
+
+### Rutes
+
+- Crear les rutes `users/manage` per al CRUD d’usuaris amb el seu middleware corresponent.
+- Crear la ruta de **l’índex** i **show** d’usuaris.
+- Assegurar que aquestes rutes només apareixen quan l’usuari està logejat.
+- Permetre la navegació entre pàgines.
+
+---
+
+### Registre de l'Sprint
+
+- Afegir a `resources/markdown/terms` el que s’ha fet en aquest sprint.
+
+
 ## **Conclusió**
 Aquest projecte ha estat un exercici complet que ha cobert la configuració inicial, gestió d'usuaris i vídeos, treball amb dates formatades, i l'ús de components, helpers, layouts i tests per garantir el bon funcionament de l'aplicació.

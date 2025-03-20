@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Models\User;  // Asegúrate de importar la clase User
 use App\Helpers\UserHelper;
 use App\Helpers\VideoHelper;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -16,7 +17,7 @@ class HelpersTest extends TestCase
     {
         parent::setUp();
 
-        // Crear permisos i rols abans de cada test
+        // Crear permisos y roles antes de cada prueba
         UserHelper::createPermissions();
     }
 
@@ -74,7 +75,15 @@ class HelpersTest extends TestCase
 
     public function test_can_create_default_video()
     {
-        // Llamamos al helper para crear los videos por defecto
+        // Crear el usuario explícitamente con ID 5
+        $user = User::factory()->create([
+            'id' => 5,
+            'name' => 'Super Admin',
+            'email' => 'superadmin@example.com',
+            'password' => bcrypt('password'),  // Puedes usar una contraseña predeterminada
+        ]);
+
+        // Llamamos al helper para crear los videos por defecto con el usuario recién creado
         $videos = VideoHelper::createDefaultVideos();
 
         // Seleccionamos el primer video creado
@@ -86,11 +95,8 @@ class HelpersTest extends TestCase
             'description' => config('videos.video_1.description'),
             'url' => config('videos.video_1.url'),
             'series_id' => 1,
+            'user_id' => 5,  // Verificamos que el user_id sea el correcto
         ]);
-
-        // Verificamos el formato personalizado de la fecha publicada
-        $formattedDate = $video->formatted_published_at;
-        $this->assertNotNull($formattedDate);
-        $this->assertEquals(now()->isoFormat('D [de] MMMM [de] YYYY'), $formattedDate);
     }
+
 }

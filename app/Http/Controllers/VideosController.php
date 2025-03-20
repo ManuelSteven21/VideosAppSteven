@@ -31,16 +31,17 @@ class VideosController extends Controller
      */
     public function show($id)
     {
-        $video = Video::findOrFail($id);
+        $video = Video::with('user')->findOrFail($id); // Carga la relación
         $previous = $video->getPrevious();
         $next = $video->getNext();
 
-        if (!$video) {
-            abort(404); // Retorna un error 404 si no es troba el vídeo
-        }
-        return view('videos.show', compact('video', 'previous', 'next'));
+        return view('videos.show', [
+            'video' => $video,
+            'previous' => $previous,
+            'next' => $next,
+            'user' => $video->user // Pasa el usuario
+        ]);
     }
-
 
     /**
      * Retorna la classe de test.

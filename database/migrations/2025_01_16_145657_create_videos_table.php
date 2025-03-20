@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('previous')->nullable(); // referencia al video anterior
             $table->string('next')->nullable(); // referencia al video siguiente
             $table->unsignedBigInteger('series_id'); // referencia a la serie, sin clave foránea
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps(); // created_at y updated_at
 
             // Clave foránea será agregada más adelante

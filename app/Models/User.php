@@ -100,4 +100,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Video::class); // Asegúrate de que exista el modelo Video
     }
+
+    public function multimedia()
+    {
+        return $this->hasMany(Multimedia::class);
+    }
 }

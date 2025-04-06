@@ -17,8 +17,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('file_path');
-            $table->string('thumbnail_path')->nullable();
-            $table->string('type');
+            $table->string('type'); // 'photo' o 'video'
             $table->boolean('is_temp')->default(true);
             $table->timestamps();
         });

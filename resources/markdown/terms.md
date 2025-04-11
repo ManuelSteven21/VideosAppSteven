@@ -239,5 +239,41 @@ Afegir els tests següents:
 - Afegir a `resources/markdown/terms` el que s’ha fet en aquest sprint.
 
 
+# Guia del projecte VideosAppSteven
+
+**Benvinguts al projecte VideosAppSteven**, una aplicació desenvolupada per gestionar i visualitzar vídeos utilitzant el framework Laravel. Aquest document explica l'objectiu del projecte i les funcionalitats desenvolupades durant tots els sprints.
+
+---
+
+## **Objectiu del projecte**
+VideosAppSteven és una plataforma que permet gestionar vídeos i sèries amb funcionalitats CRUD, control d'accés per rols i relacions entre entitats.
+
+---
+
+## **Desenvolupament del 6è Sprint**
+
+### Correccions i millores
+- Corregits els errors del 5è sprint
+- Verificat que no fallen tests d'sprints anteriors
+
+### Funcionalitats per a Regular Users
+- Regular users ara poden crear vídeos
+- Afegides funcions CRUD a `VideoController` per regular users
+- Implementats botons CRUD a la vista de vídeos
+
+### Implementació de Sèries
+#### Migració
+php
+Schema::create('series', function (Blueprint $table) {
+    $table->id();
+    $table->string('title');
+    $table->text('description');
+    $table->string('image');
+    $table->string('user_name');
+    $table->string('user_photo_url');
+    $table->timestamp('published_at');
+    $table->timestamps();
+});
+
 ## **Conclusió**
 Aquest projecte ha estat un exercici complet que ha cobert la configuració inicial, gestió d'usuaris i vídeos, treball amb dates formatades, i l'ús de components, helpers, layouts i tests per garantir el bon funcionament de l'aplicació.

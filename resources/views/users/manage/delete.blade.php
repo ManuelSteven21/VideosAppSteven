@@ -1,40 +1,55 @@
 @extends('layouts.VideosAppLayout')
 
 @section('content')
-    <div class="confirmation-container">
-        <div class="confirmation-card">
-            <h1 class="confirmation-title">Eliminar Usuari</h1>
+    <div class="max-w-md mx-auto px-4 py-8">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <!-- Capçalera -->
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h1 class="text-2xl font-bold text-gray-800">Eliminar Usuari</h1>
+            </div>
 
-            <div class="warning-alert">
-                <svg class="warning-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-                </svg>
-                <div class="warning-content">
-                    <div class="warning-text">Esteu segur que voleu eliminar l'usuari:</div>
-                    <div class="user-title">{{ $user->name }}</div>
+            <!-- Missatge d'advertència -->
+            <div class="px-6 py-4">
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-yellow-700">
+                                Esteu segur que voleu eliminar l'usuari:
+                            </p>
+                            <h3 class="text-lg font-medium text-yellow-800 mt-1">{{ $user->name }}</h3>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <form action="{{ route('users.manage.destroy', $user->id) }}" method="POST" data-qa="user-delete-form">
-                @csrf
-                @method('DELETE')
+            <!-- Formulari d'eliminació -->
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+                <form action="{{ route('users.manage.destroy', $user->id) }}" method="POST" class="flex justify-end space-x-3" data-qa="user-delete-form">
+                    @csrf
+                    @method('DELETE')
 
-                <div class="button-group">
-                    <button type="submit" class="danger-button" data-qa="delete-button">
-                        <svg class="button-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                        </svg>
-                        Eliminar Usuari
-                    </button>
-
-                    <a href="{{ route('users.manage.index') }}" class="cancel-button" data-qa="cancel-button">
-                        <svg class="button-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <a href="{{ route('users.manage.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                       data-qa="cancel-button">
+                        <svg class="-ml-1 mr-2 h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
                         </svg>
                         Cancel·lar
                     </a>
-                </div>
-            </form>
+
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                            data-qa="delete-button">
+                        <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                        </svg>
+                        Eliminar Usuari
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 @endsection

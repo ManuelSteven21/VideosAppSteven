@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Video;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -12,7 +13,6 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 use Tests\Unit\UserTest;
 use Tests\Unit\VideosTest;
-use App\Models\Video;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -21,6 +21,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $profile_photo_url
  * @property-read \App\Models\Team|null $team
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Team[] $ownedTeams
+ * @property int $multimedia_count
+ * @property int $photos_count
+ * @property int $videos_count
  */
 
 class User extends Authenticatable
@@ -66,6 +69,7 @@ class User extends Authenticatable
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
+     *
      */
     protected function casts(): array
     {
@@ -98,11 +102,12 @@ class User extends Authenticatable
 
     public function videos(): HasMany
     {
-        return $this->hasMany(Video::class); // Asegúrate de que exista el modelo Video
+        return $this->hasMany(Video::class);
     }
 
     public function multimedia()
     {
         return $this->hasMany(Multimedia::class);
     }
+
 }

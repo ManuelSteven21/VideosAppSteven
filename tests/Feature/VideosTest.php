@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\Video;
 use App\Models\User;
+use App\Models\Series;
 use App\Helpers\UserHelper;
 
 class VideosTest extends TestCase
@@ -31,8 +32,15 @@ class VideosTest extends TestCase
     {
         $this->actingAs($this->teacher);
 
-        $user = User::factory()->create(); // Crear un usuari de prova
-        $video = Video::factory()->create(['user_id' => $user->id]); // Assegurar-se que tingui user_id
+        // 1. Crear serie necesaria
+        $series = Series::factory()->create();
+
+        // 2. Crear usuario y video asociados
+        $user = User::factory()->create();
+        $video = Video::factory()->create([
+            'user_id' => $user->id,
+            'series_id' => $series->id,
+        ]);
 
         $response = $this->get(route('videos.show', $video->id));
 

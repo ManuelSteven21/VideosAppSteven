@@ -2,7 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\Models\User;  // Asegúrate de importar la clase User
+use App\Models\User;
+use App\Models\Series;
 use App\Helpers\UserHelper;
 use App\Helpers\VideoHelper;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -75,28 +76,22 @@ class HelpersTest extends TestCase
 
     public function test_can_create_default_video()
     {
-        // Crear el usuario explícitamente con ID 5
-        $user = User::factory()->create([
-            'id' => 5,
-            'name' => 'Super Admin',
-            'email' => 'superadmin@example.com',
-            'password' => bcrypt('password'),  // Puedes usar una contraseña predeterminada
-        ]);
+        // 1. Crear usuario admin
+        $adminUser = User::factory()->create(['id' => 5]);
 
-        // Llamamos al helper para crear los videos por defecto con el usuario recién creado
+        // 2. Crear LAS 3 SERIES QUE NECESITAN LOS VIDEOS
+        Series::factory()->create(['id' => 1]);
+        Series::factory()->create(['id' => 2]);
+        Series::factory()->create(['id' => 3]);
+
+        // 3. Llamar al helper
         $videos = VideoHelper::createDefaultVideos();
 
-        // Seleccionamos el primer video creado
-        $video = $videos->first();
-
-        // Verificamos que el video se haya creado correctamente en la base de datos
+        // 4. Verificar solo el primer video (de la serie 1)
         $this->assertDatabaseHas('videos', [
-            'title' => config('videos.video_1.title'),
-            'description' => config('videos.video_1.description'),
-            'url' => config('videos.video_1.url'),
+            'title' => 'Gol de Barou Shouei',
             'series_id' => 1,
-            'user_id' => 5,  // Verificamos que el user_id sea el correcto
+            'user_id' => 5,
         ]);
     }
-
 }

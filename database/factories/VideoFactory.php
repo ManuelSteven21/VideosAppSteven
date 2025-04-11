@@ -3,9 +3,9 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use App\Models\Series; // ✅ AÑADIR ESTO
 use App\Models\Video;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Faker\Generator as Faker;
 use Illuminate\Support\Carbon;
 
 class VideoFactory extends Factory
@@ -17,12 +17,10 @@ class VideoFactory extends Factory
         return [
             'title' => $this->faker->sentence,
             'description' => $this->faker->paragraph,
-            'url' => $this->faker->url,
-            'previous' => null,
-            'next' => null,
-            'series_id' => 1, // Suponiendo que tienes una serie
-            'published_at' => Carbon::now(),
-            'user_id' => User::factory(),
+            'url' => 'https://www.youtube.com/embed/' . $this->faker->uuid,
+            'series_id' => Series::factory(), // Crear serie automáticamente
+            'user_id' => User::factory(), // Crear usuario automáticamente
+            'published_at' => now(),
         ];
     }
 }

@@ -28,7 +28,11 @@ class UsersController extends Controller
      */
     public function show($id)
     {
-        $user = User::with('videos')->findOrFail($id); // Usa User:: en lugar de Video::
+        $user = User::with(['videos' => function($query) {
+            $query->with('user') // Asegúrate de cargar la relación user
+            ->orderBy('created_at', 'desc');
+        }])->findOrFail($id);
+
         return view('users.show', compact('user'));
     }
 

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use App\Models\User;
 use App\Helpers\UserHelper;
@@ -19,7 +20,7 @@ class UserTest extends TestCase
         UserHelper::createPermissions();
     }
 
-    /** @test */
+    #[Test]
     public function user_without_permissions_can_see_default_users_page()
     {
         $user = UserHelper::createRegularUser();
@@ -29,7 +30,7 @@ class UserTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function user_with_permissions_can_see_default_users_page()
     {
         $user = UserHelper::createVideoManagerUser();
@@ -39,7 +40,7 @@ class UserTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function not_logged_users_cannot_see_default_users_page()
     {
         $response = $this->get(route('users.index'));
@@ -47,7 +48,7 @@ class UserTest extends TestCase
         $response->assertRedirect(route('login'));
     }
 
-    /** @test */
+    #[Test]
     public function user_without_permissions_can_see_user_show_page()
     {
         $user = UserHelper::createRegularUser();
@@ -58,7 +59,7 @@ class UserTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function user_with_permissions_can_see_user_show_page()
     {
         $user = UserHelper::createSuperAdminUser();
@@ -69,7 +70,7 @@ class UserTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /** @test */
+    #[Test]
     public function not_logged_users_cannot_see_user_show_page()
     {
         $targetUser = UserHelper::createRegularUser();

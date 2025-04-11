@@ -111,4 +111,9 @@ class Video extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function series()
+    {
+        return $this->belongsTo(Series::class);
+    }
 }

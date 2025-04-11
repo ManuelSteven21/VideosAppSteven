@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Helpers\SerieHelper;
 use App\Helpers\UserHelper;
 use App\Helpers\VideoHelper;
+use App\Models\Series;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -27,6 +29,7 @@ class DatabaseSeeder extends Seeder
         UserHelper::createRegularUser();
         UserHelper::createVideoManagerUser();
         UserHelper::createSuperAdminUser();
+        SerieHelper::createDefaultSeries();
         VideoHelper::createDefaultVideos();
     }
 }

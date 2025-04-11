@@ -41,7 +41,7 @@ class UsersManageController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8',
-            'role' => 'required|in:regular,video_manager,super_admin',  // roles disponibles
+            'role' => 'required|in:regular,video_manager,super_admin',
         ]);
 
         // Asignar valor de super_admin en función del rol seleccionado
@@ -153,10 +153,21 @@ class UsersManageController extends Controller
         }
 
         $user = User::findOrFail($id);
+
+        // Verificar si el usuario que se va a eliminar es el autenticado
+        $isSelf = auth()->id() === $user->id;
+
         $user->delete();
+
+        if ($isSelf) {
+            // Cerrar sesión y redirigir a videos.index si el usuario se ha eliminado a sí mismo
+            auth()->logout();
+            return redirect()->route('videos.index')->with('success', 'El teu compte s\'ha eliminat correctament.');
+        }
 
         return redirect()->route('users.manage.index')->with('success', 'Usuari eliminat correctament.');
     }
+
 
     /**
      * Retorna el test associat a aquest controlador.

@@ -8,6 +8,17 @@ use Tests\Feature\Videos\VideosManageControllerTest;
 
 class VideosManageController extends Controller
 {
+    public function __construct()
+    {
+        // Aplica la comprovació només als mètodes indicats
+        $this->middleware(function ($request, $next) {
+            $user = auth()->user();
+            if (!$user->can('manage-videos') && !$user->can('create-videos')) {
+                abort(403, 'No tens permisos per accedir a aquesta secció de vídeos.');
+            }
+            return $next($request);
+        })->only(['create', 'store', 'edit', 'update', 'delete', 'destroy']);
+    }
     /**
      * Llista tots els vídeos per a la gestió.
      */
@@ -26,41 +37,40 @@ class VideosManageController extends Controller
     /**
      * Mostra el formulari per crear un nou vídeo.
      */
-    public function create()
+    public function create(Request $request)
     {
-        if (!auth()->user()->can('manage-videos')) {
-            \Log::info('User does not have permission to manage videos');
-            abort(403, 'No tens permisos per gestionar vídeos.');
-        }
-
-        return view('videos.manage.create');
+        session(['video_creation_referer' => $request->headers->get('referer')]);
+        // Cargar todas las series, ordenadas por título (puedes modificar el orden si lo deseas)
+        $series = \App\Models\Series::orderBy('title')->get();
+        // Ahora pasamos la variable $series a la vista
+        return view('videos.manage.create', compact('series'));
     }
+
 
     /**
      * Emmagatzema un nou vídeo a la base de dades.
      */
     public function store(Request $request)
     {
-        if (!auth()->user()->can('manage-videos')) {
-            \Log::info('User does not have permission to manage videos');
-            abort(403, 'No tens permisos per gestionar vídeos.');
-        }
-
         $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
+            'title'       => 'required|string|max:255',
             'description' => 'nullable|string',
-            'url' => 'required|url',
-            // No es necesario incluir series_id ni published_at en la validación
+            'url'         => 'required|url',
+            'series_id'   => 'nullable|exists:series,id',
         ]);
 
-        // 🔹 Assegurar que `user_id` es guarda correctament
         $validatedData['user_id'] = auth()->id();
-        $validatedData['series_id'] = 1; // Valor predeterminat per `series_id`
-        $validatedData['published_at'] = now(); // Valor per `published_at`
+        $validatedData['published_at'] = now();
 
-        Video::create($validatedData);
+        // Si no se seleccionó una serie, podemos asignar null (o, en caso de querer asignar una serie por defecto, hacerlo aquí)
+        if (!isset($validatedData['series_id'])) {
+            $validatedData['series_id'] = null;
+        }
 
-        return redirect()->route('videos.manage.index')->with('success', 'Vídeo creat correctament.');
+        $video = Video::create($validatedData);
+
+        // Redirigir al show del vídeo recién creado
+        return redirect()->route('videos.show', $video->id)->with('success', 'Vídeo creat correctament.');
     }
 
 
@@ -68,16 +78,13 @@ class VideosManageController extends Controller
     /**
      * Mostra la vista d'edició d'un vídeo.
      */
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
-        if (!auth()->user()->can('manage-videos')) {
-            \Log::info('User does not have permission to manage videos');
-            abort(403, 'No tens permisos per gestionar vídeos.');
-        }
-
-
+        session(['video_edition_referer' => $request->headers->get('referer')]);
         $video = Video::findOrFail($id);
-        return view('videos.manage.edit', compact('video'));
+        $this->authorize('update', $video);
+        $series = \App\Models\Series::orderBy('title')->get();
+        return view('videos.manage.edit', compact('video','series'));
     }
 
     /**
@@ -85,43 +92,44 @@ class VideosManageController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!auth()->user()->can('manage-videos')) {
-            \Log::info('User does not have permission to manage videos');
-            abort(403, 'No tens permisos per gestionar vídeos.');
-        }
-
         $video = Video::findOrFail($id);
 
         $validatedData = $request->validate([
-            'title' => 'sometimes|required|string|max:255',
+            'title'       => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
-            'url' => 'sometimes|required|url',
-            'published_at' => 'nullable|date',
-            'previous' => 'nullable|string',
-            'next' => 'nullable|string',
-            'series_id' => 'sometimes|required|integer'
+            'url'         => 'sometimes|required|url',
+            'published_at'=> 'nullable|date',
+            'previous'    => 'nullable|string',
+            'next'        => 'nullable|string',
+            'series_id'   => 'nullable|exists:series,id',
         ]);
 
-        // 🔹 Assegurar que `user_id` no es perdi
+        // Conserva el user_id original o asigna otro que haga sentido
         $validatedData['user_id'] = $video->user_id;
-
         $video->update($validatedData);
 
-        return redirect()->route('videos.manage.index')->with('success', 'Vídeo actualitzat correctament.');
+        $referer = session('video_edition_referer');
+        session()->forget('video_edition_referer');
+
+        if (str_contains($referer, route('videos.manage.index'))) {
+            return redirect()->route('videos.manage.index')
+                ->with('success', 'Vídeo actualitzat correctament.');
+        }
+
+
+        // Redirigir al show del vídeo actualizado
+        return redirect()->route('videos.show', $video->id)->with('success', 'Vídeo actualitzat correctament.');
     }
 
 
     /**
      * Mostra la vista de confirmació per eliminar un vídeo.
      */
-    public function delete($id)
+    public function delete(Request $request, $id)
     {
-        if (!auth()->user()->can('manage-videos')) {
-            \Log::info('User does not have permission to manage videos');
-            abort(403, 'No tens permisos per gestionar vídeos.');
-        }
-
         $video = Video::findOrFail($id);
+        $this->authorize('delete', $video);
+        session(['video_deletion_referer' => $request->headers->get('referer')]);
         return view('videos.manage.delete', compact('video'));
     }
 
@@ -130,15 +138,18 @@ class VideosManageController extends Controller
      */
     public function destroy($id)
     {
-        if (!auth()->user()->can('manage-videos')) {
-            \Log::info('User does not have permission to manage videos');
-            abort(403, 'No tens permisos per gestionar vídeos.');
-        }
-
         $video = Video::findOrFail($id);
         $video->delete();
 
-        return redirect()->route('videos.manage.index')->with('success', 'Vídeo eliminat correctament.');
+        $referer = session('video_deletion_referer');
+        session()->forget('video_deletion_referer');
+
+        if (str_contains($referer, route('videos.manage.index'))) {
+            return redirect()->route('videos.manage.index')
+                ->with('success', 'Vídeo eliminat correctament.');
+        }
+
+        return redirect()->route('videos.index')->with('success', 'Vídeo eliminat correctament.');
     }
 
     public function testedBy(): string

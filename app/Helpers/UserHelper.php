@@ -19,10 +19,9 @@ class UserHelper
         // Crear permisos
         $permissions = [
             'manage-videos',
-            'view-videos',
             'manage-users',
-            'manage-teams',
-            'manage-permissions',
+            'create-videos',
+            'manage-series'
         ];
 
         foreach ($permissions as $permission) {
@@ -34,12 +33,11 @@ class UserHelper
 
         // Crear roles y asignar permisos
         $roles = [
-            'regular' => ['view-videos'],
-            'video_manager' => ['manage-videos', 'view-videos'],
+            'regular' => ['create-videos'],
+            'video_manager' => ['manage-videos', 'create-videos', 'manage-series'],
             'super_admin' => [
                 'manage-videos', 'manage-users',
-                'manage-teams', 'manage-permissions',
-                'view-videos'
+                'create-videos', 'manage-series'
             ],
         ];
 
@@ -54,20 +52,17 @@ class UserHelper
 
     public static function defineGates()
     {
-        Gate::define('view-videos', function (User $user) {
-            return $user->hasPermissionTo('view-videos');
-        });
         Gate::define('manage-videos', function (User $user) {
             return $user->hasPermissionTo('manage-videos');
         });
         Gate::define('manage-users', function (User $user) {
             return $user->hasPermissionTo('manage-users');
         });
-        Gate::define('manage-teams', function (User $user) {
-            return $user->hasPermissionTo('manage-teams');
+        Gate::define('manage-series', function (User $user) {
+            return $user->hasPermissionTo('manage-series');
         });
-        Gate::define('manage-permissions', function (User $user) {
-            return $user->isSuperAdmin();
+        Gate::define('create-videos', function (User $user) {
+            return $user->hasPermissionTo('create-videos');
         });
     }
 

@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -10,11 +11,7 @@ class UserTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * Test que verifica si un usuari és superadmin.
-     *
-     * @return void
-     */
+    #[Test]
     public function test_user_is_superadmin()
     {
         // Crear un usuari amb super_admin = true
@@ -26,11 +23,7 @@ class UserTest extends TestCase
         $this->assertTrue($user->isSuperAdmin());
     }
 
-    /**
-     * Test que verifica si un usuari no és superadmin.
-     *
-     * @return void
-     */
+    #[Test]
     public function test_user_is_not_superadmin()
     {
         // Crear un usuari amb super_admin = false
@@ -42,11 +35,7 @@ class UserTest extends TestCase
         $this->assertFalse($user->isSuperAdmin());
     }
 
-    /**
-     * Test que verifica si un usuari no té el camp super_admin definit.
-     *
-     * @return void
-     */
+    #[Test]
     public function test_user_has_no_superadmin_field()
     {
         // Crear un usuari sense definir el camp super_admin

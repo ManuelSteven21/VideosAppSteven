@@ -7,6 +7,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Helpers\UserHelper;
 use PHPUnit\Framework\Attributes\Test;
+use Illuminate\Support\Facades\Session;
+
 
 class UsersManageControllerTest extends TestCase
 {
@@ -16,7 +18,9 @@ class UsersManageControllerTest extends TestCase
     {
         parent::setUp();
         UserHelper::createPermissions();
+        UserHelper::defineGates();
         $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
+        $this->withoutMiddleware(\Illuminate\Auth\Middleware\RedirectIfAuthenticated::class);
     }
 
     #[Test]
@@ -65,46 +69,78 @@ class UsersManageControllerTest extends TestCase
     public function user_with_permissions_can_store_users()
     {
         $user = UserHelper::createSuperAdminUser();
-        $this->actingAs($user)
-            ->post(route('users.manage.store'), [
-                'name' => 'Test User',
-                'email' => 'test@example.com',
-                'password' => 'password',
-                'role' => 'regular',
-            ])->assertRedirect(route('users.manage.index'));
+        $this->actingAs($user);
+
+        // Generar token CSRF y añadirlo a la solicitud
+        Session::start();
+        $token = csrf_token();
+
+        $response = $this->post(route('users.manage.store'), [
+            '_token' => $token,
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => 'password',
+            'role' => 'regular',
+        ]);
+
+        $response->assertRedirect(route('users.manage.index'));
+        $this->assertDatabaseHas('users', ['email' => 'test@example.com']);
     }
 
     #[Test]
     public function user_without_permissions_cannot_store_users()
     {
         $user = UserHelper::createRegularUser();
-        $this->actingAs($user)
-            ->post(route('users.manage.store'), [
-                'name' => 'Test User',
-                'email' => 'test@example.com',
-                'password' => 'password',
-                'role' => 'regular',
-            ])->assertForbidden();
+        $this->actingAs($user);
+
+        Session::start();
+        $token = csrf_token();
+
+        $response = $this->post(route('users.manage.store'), [
+            '_token' => $token,
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'password' => 'password',
+            'role' => 'regular',
+        ]);
+
+        $response->assertForbidden();
     }
 
     #[Test]
     public function user_with_permissions_can_destroy_users()
     {
         $user = UserHelper::createSuperAdminUser();
+        $this->actingAs($user);
         $userToDelete = UserHelper::createRegularUser();
-        $this->actingAs($user)
-            ->delete(route('users.manage.destroy', $userToDelete->id))
-            ->assertRedirect(route('users.manage.index'));
+
+        Session::start();
+        $token = csrf_token();
+
+        $response = $this->delete(route('users.manage.destroy', $userToDelete->id), [
+            '_token' => $token,
+        ]);
+
+        $response->assertRedirect(route('users.manage.index'));
+        $this->assertDatabaseMissing('users', ['id' => $userToDelete->id]);
     }
 
     #[Test]
     public function user_without_permissions_cannot_destroy_users()
     {
         $user = UserHelper::createRegularUser();
-        $userToDelete = UserHelper::createDefaultUser(); // Aquest usuari tindrà un email únic
-        $this->actingAs($user)
-            ->delete(route('users.manage.destroy', $userToDelete->id))
-            ->assertForbidden();
+        $userToDelete = UserHelper::createDefaultUser();
+
+        Session::start();
+        $token = csrf_token();
+
+        $response = $this->actingAs($user)
+            ->delete(route('users.manage.destroy', $userToDelete->id), [
+                '_token' => $token,
+            ]);
+
+        $response->assertForbidden();
+        $this->assertDatabaseHas('users', ['id' => $userToDelete->id]);
     }
 
     #[Test]
@@ -121,7 +157,7 @@ class UsersManageControllerTest extends TestCase
     public function user_without_permissions_cannot_see_edit_users()
     {
         $user = UserHelper::createRegularUser();
-        $userToEdit = UserHelper::createDefaultUser(); // Aquest usuari tindrà un email únic
+        $userToEdit = UserHelper::createDefaultUser();
         $this->actingAs($user)
             ->get(route('users.manage.edit', $userToEdit->id))
             ->assertForbidden();
@@ -132,25 +168,48 @@ class UsersManageControllerTest extends TestCase
     {
         $user = UserHelper::createSuperAdminUser();
         $userToUpdate = UserHelper::createRegularUser();
-        $this->actingAs($user)
+
+        Session::start();
+        $token = csrf_token();
+
+        $response = $this->actingAs($user)
             ->put(route('users.manage.update', $userToUpdate->id), [
+                '_token' => $token,
                 'name' => 'Updated User',
                 'email' => 'updated@example.com',
                 'role' => 'video_manager',
-            ])->assertRedirect(route('users.manage.index'));
+            ]);
+
+        $response->assertRedirect(route('users.manage.index'));
+        $this->assertDatabaseHas('users', [
+            'id' => $userToUpdate->id,
+            'name' => 'Updated User',
+            'email' => 'updated@example.com'
+        ]);
     }
 
     #[Test]
     public function user_without_permissions_cannot_update_users()
     {
         $user = UserHelper::createRegularUser();
-        $userToUpdate = UserHelper::createDefaultUser(); // Aquest usuari tindrà un email únic
-        $this->actingAs($user)
+        $userToUpdate = UserHelper::createDefaultUser();
+
+        Session::start();
+        $token = csrf_token();
+
+        $response = $this->actingAs($user)
             ->put(route('users.manage.update', $userToUpdate->id), [
+                '_token' => $token,
                 'name' => 'Updated User',
-                'email' => 'updated_' . uniqid() . '@example.com', // Email únic
+                'email' => 'updated_' . uniqid() . '@example.com',
                 'role' => 'video_manager',
-            ])->assertForbidden();
+            ]);
+
+        $response->assertForbidden();
+        $this->assertDatabaseMissing('users', [
+            'id' => $userToUpdate->id,
+            'name' => 'Updated User'
+        ]);
     }
 
     #[Test]

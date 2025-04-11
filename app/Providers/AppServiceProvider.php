@@ -21,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 
-    protected $policies = [];
+    protected $policies = [\App\Models\Video::class => \App\Policies\VideoPolicy::class,];
     public function registerPolicies()
     {
         foreach ($this->policies as $model => $policy) {

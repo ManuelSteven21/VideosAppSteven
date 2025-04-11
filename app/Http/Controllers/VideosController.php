@@ -17,7 +17,7 @@ class VideosController extends Controller
     public function index()
     {
         // Obtenir tots els vídeos ordenats per data de publicació (més recents primer)
-        $videos = Video::orderBy('published_at', 'desc')->get();
+        $videos = Video::with('user')->orderBy('published_at', 'desc')->get();
 
         // Retornar la vista amb els vídeos
         return view('videos.index', compact('videos'));

@@ -19,12 +19,9 @@ return new class extends Migration
             $table->timestamp('published_at')->nullable(); // fecha de publicación, opcional
             $table->string('previous')->nullable(); // referencia al video anterior
             $table->string('next')->nullable(); // referencia al video siguiente
-            $table->unsignedBigInteger('series_id'); // referencia a la serie, sin clave foránea
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('series_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             $table->timestamps(); // created_at y updated_at
-
-            // Clave foránea será agregada más adelante
-            // $table->foreign('series_id')->references('id')->on('series')->cascadeOnDelete();
         });
     }
 

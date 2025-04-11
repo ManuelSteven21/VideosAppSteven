@@ -3,6 +3,8 @@
 namespace App\Helpers;
 
 use App\Models\Video;
+use App\Models\Series;
+
 
 class VideoHelper
 {
@@ -62,6 +64,83 @@ class VideoHelper
             'previous' => config('videos.video_5.previous'),
             'next' => config('videos.video_5.next'),
             'series_id' => 1,
+            'published_at' => now(),
+            'user_id' => 5, // usuari administrador de videos
+        ]);
+
+        $videos[] = Video::create([
+            'title' => config('videos.video_6.title'),
+            'description' => config('videos.video_6.description'),
+            'url' => config('videos.video_6.url'),
+            'previous' => config('videos.video_6.previous'),
+            'next' => config('videos.video_6.next'),
+            'series_id' => 2,
+            'published_at' => now(),
+            'user_id' => 5, // usuari administrador de videos
+        ]);
+
+        $videos[] = Video::create([
+            'title' => config('videos.video_7.title'),
+            'description' => config('videos.video_7.description'),
+            'url' => config('videos.video_7.url'),
+            'previous' => config('videos.video_7.previous'),
+            'next' => config('videos.video_7.next'),
+            'series_id' => 2,
+            'published_at' => now(),
+            'user_id' => 5, // usuari administrador de videos
+        ]);
+
+        $videos[] = Video::create([
+            'title' => config('videos.video_8.title'),
+            'description' => config('videos.video_8.description'),
+            'url' => config('videos.video_8.url'),
+            'previous' => config('videos.video_8.previous'),
+            'next' => config('videos.video_8.next'),
+            'series_id' => 2,
+            'published_at' => now(),
+            'user_id' => 5, // usuari administrador de videos
+        ]);
+
+        $videos[] = Video::create([
+            'title' => config('videos.video_9.title'),
+            'description' => config('videos.video_9.description'),
+            'url' => config('videos.video_9.url'),
+            'previous' => config('videos.video_9.previous'),
+            'next' => config('videos.video_9.next'),
+            'series_id' => 3,
+            'published_at' => now(),
+            'user_id' => 5, // usuari administrador de videos
+        ]);
+
+        $videos[] = Video::create([
+            'title' => config('videos.video_10.title'),
+            'description' => config('videos.video_10.description'),
+            'url' => config('videos.video_10.url'),
+            'previous' => config('videos.video_10.previous'),
+            'next' => config('videos.video_10.next'),
+            'series_id' => 3,
+            'published_at' => now(),
+            'user_id' => 5, // usuari administrador de videos
+        ]);
+
+        $videos[] = Video::create([
+            'title' => config('videos.video_11.title'),
+            'description' => config('videos.video_11.description'),
+            'url' => config('videos.video_11.url'),
+            'previous' => config('videos.video_11.previous'),
+            'next' => config('videos.video_11.next'),
+            'series_id' => 3,
+            'published_at' => now(),
+            'user_id' => 5, // usuari administrador de videos
+        ]);
+
+        $videos[] = Video::create([
+            'title' => config('videos.video_12.title'),
+            'description' => config('videos.video_12.description'),
+            'url' => config('videos.video_12.url'),
+            'previous' => config('videos.video_12.previous'),
+            'next' => config('videos.video_12.next'),
+            'series_id' => 3,
             'published_at' => now(),
             'user_id' => 5, // usuari administrador de videos
         ]);

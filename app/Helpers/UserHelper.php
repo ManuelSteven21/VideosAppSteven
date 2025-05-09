@@ -21,7 +21,8 @@ class UserHelper
             'manage-videos',
             'manage-users',
             'create-videos',
-            'manage-series'
+            'manage-series',
+            'create-series'
         ];
 
         foreach ($permissions as $permission) {
@@ -33,11 +34,17 @@ class UserHelper
 
         // Crear roles y asignar permisos
         $roles = [
-            'regular' => ['create-videos'],
-            'video_manager' => ['manage-videos', 'create-videos', 'manage-series'],
+            'regular' => [
+                'create-videos', 'create-series'
+            ],
+            'video_manager' => [
+                'manage-videos', 'create-videos',
+                'manage-series', 'create-series'
+            ],
             'super_admin' => [
                 'manage-videos', 'manage-users',
-                'create-videos', 'manage-series'
+                'create-videos', 'manage-series',
+                'create-series'
             ],
         ];
 

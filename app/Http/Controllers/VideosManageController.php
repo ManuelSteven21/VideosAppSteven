@@ -62,16 +62,19 @@ class VideosManageController extends Controller
         $validatedData['user_id'] = auth()->id();
         $validatedData['published_at'] = now();
 
-        // Si no se seleccionó una serie, podemos asignar null (o, en caso de querer asignar una serie por defecto, hacerlo aquí)
         if (!isset($validatedData['series_id'])) {
             $validatedData['series_id'] = null;
         }
 
         $video = Video::create($validatedData);
 
-        // Redirigir al show del vídeo recién creado
+        // 🔔 Dispara l'event aquí
+        \Log::info('Disparant event VideoCreated...');
+        event(new \App\Events\VideoCreated($video));
+
         return redirect()->route('videos.show', $video->id)->with('success', 'Vídeo creat correctament.');
     }
+
 
 
 

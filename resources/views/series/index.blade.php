@@ -7,6 +7,18 @@
             <div class="space-y-4">
                 <h1 class="text-3xl font-bold text-gray-900" data-qa="page-title">Explora les nostres sèries</h1>
 
+                @can('create-series')
+                    <div class="text-right">
+                        <a href="{{ route('series.manage.create') }}"
+                           class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700">
+                            <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                            Nova sèrie
+                        </a>
+                    </div>
+                @endcan
+
                 <!-- Cercador - Icono mejor posicionado -->
                 <form action="{{ route('series.index') }}" method="GET" class="w-full max-w-2xl" data-qa="series-search-form">
                     <div class="relative">

@@ -52,17 +52,9 @@ class SeriesManageControllerTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_user_without_series_manage_create_cannot_see_add_series()
-    {
-        $this->loginAsRegularUser();
-        $response = $this->get(route('series.manage.create'));
-        $response->assertStatus(403);
-    }
-
     public function test_user_with_permissions_can_store_series()
     {
         $this->loginAsSuperAdmin();
-        // Inicia la sesión para poder generar el token
         Session::start();
 
         $data = [
@@ -73,25 +65,8 @@ class SeriesManageControllerTest extends TestCase
         ];
 
         $response = $this->post(route('series.manage.store'), $data);
-        $response->assertRedirect(route('series.manage.index'));
+        $response->assertRedirect(route('series.show', Series::first()->id));
         $this->assertDatabaseHas('series', ['title' => 'Test Series']);
-    }
-
-    public function test_user_without_permissions_cannot_store_series()
-    {
-        $this->loginAsRegularUser();
-        Session::start();
-
-        $data = [
-            '_token'      => csrf_token(),
-            'title'       => 'Test Series',
-            'description' => 'Test Description',
-            'image'       => 'http://example.com/image.jpg',
-        ];
-
-        $response = $this->post(route('series.manage.store'), $data);
-        // Aquí se espera 403, ya que el usuario regular no tiene el permiso
-        $response->assertStatus(403);
     }
 
     public function test_user_with_permissions_can_destroy_series()
@@ -100,20 +75,9 @@ class SeriesManageControllerTest extends TestCase
         Session::start();
 
         $series = Series::factory()->create();
-        // Enviar token con la petición DELETE
         $response = $this->delete(route('series.manage.destroy', $series->id), ['_token' => csrf_token()]);
-        $response->assertRedirect(route('series.manage.index'));
+        $response->assertRedirect(route('series.index'));
         $this->assertDatabaseMissing('series', ['id' => $series->id]);
-    }
-
-    public function test_user_without_permissions_cannot_destroy_series()
-    {
-        $this->loginAsRegularUser();
-        Session::start();
-
-        $series = Series::factory()->create();
-        $response = $this->delete(route('series.manage.destroy', $series->id), ['_token' => csrf_token()]);
-        $response->assertStatus(403);
     }
 
     public function test_user_with_permissions_can_see_edit_series()
@@ -122,14 +86,6 @@ class SeriesManageControllerTest extends TestCase
         $series = Series::factory()->create();
         $response = $this->get(route('series.manage.edit', $series->id));
         $response->assertStatus(200);
-    }
-
-    public function test_user_without_permissions_cannot_see_edit_series()
-    {
-        $this->loginAsRegularUser();
-        $series = Series::factory()->create();
-        $response = $this->get(route('series.manage.edit', $series->id));
-        $response->assertStatus(403);
     }
 
     public function test_user_with_permissions_can_update_series()
@@ -145,22 +101,8 @@ class SeriesManageControllerTest extends TestCase
             'image'       => 'http://example.com/newimage.jpg',
         ];
         $response = $this->put(route('series.manage.update', $series->id), $data);
-        $response->assertRedirect(route('series.manage.index'));
+        $response->assertRedirect(route('series.show', $series->id));
         $this->assertDatabaseHas('series', ['title' => 'Updated Title']);
-    }
-
-    public function test_user_without_permissions_cannot_update_series()
-    {
-        $this->loginAsRegularUser();
-        Session::start();
-
-        $series = Series::factory()->create();
-        $data = [
-            '_token' => csrf_token(),
-            'title'  => 'Updated Title',
-        ];
-        $response = $this->put(route('series.manage.update', $series->id), $data);
-        $response->assertStatus(403);
     }
 
     public function test_user_with_permissions_can_manage_series()

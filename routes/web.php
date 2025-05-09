@@ -55,6 +55,9 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'can:manage-series'])->group(function () {
     Route::get('/seriesmanage', [SeriesManageController::class, 'index'])->name('series.manage.index');
+});
+
+Route::middleware('auth')->group(function () {
     Route::get('/series/manage/create', [SeriesManageController::class, 'create'])->name('series.manage.create');
     Route::post('/series/manage', [SeriesManageController::class, 'store'])->name('series.manage.store');
     Route::get('/series/manage/{id}/edit', [SeriesManageController::class, 'edit'])->name('series.manage.edit');
@@ -67,4 +70,13 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     Route::get('/dashboard', function () {
         return redirect()->route('videos.index');
     })->name('dashboard');
+});
+
+Route::get('/notifications', function () {
+    return view('notifications');
+});
+
+// routes/web.php
+Route::middleware('auth')->get('/api/notifications', function () {
+    return auth()->user()->notifications;
 });

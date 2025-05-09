@@ -15,12 +15,29 @@
         <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8">
             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                 <h1 class="text-2xl font-bold text-gray-800">Detalls de la Sèrie: {{ $series->title }}</h1>
-                <a href="{{ route('series.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                    <svg class="-ml-1 mr-2 h-5 w-5 text-gray-500" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
-                    </svg>
-                    Tornar
-                </a>
+
+                <div class="flex items-center space-x-2">
+                    <a href="{{ route('series.index') }}"
+                       class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        <svg class="-ml-1 mr-2 h-5 w-5 text-gray-500" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                        </svg>
+                        Tornar
+                    </a>
+
+                    @auth
+                        @can('update', $series)
+                            <a href="{{ route('series.manage.edit', $series->id) }}"
+                               class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                ✏️ Editar
+                            </a>
+                            <a href="{{ route('series.manage.delete', $series->id) }}"
+                               class="inline-flex items-center px-4 py-2 border border-transparent rounded-md text-sm text-white bg-red-600 hover:bg-red-700">
+                                🗑️ Eliminar
+                            </a>
+                        @endcan
+                    @endauth
+                </div>
             </div>
 
             <div class="px-6 py-4">

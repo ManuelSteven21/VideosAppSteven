@@ -275,5 +275,55 @@ Schema::create('series', function (Blueprint $table) {
     $table->timestamps();
 });
 
-## **Conclusió**
-Aquest projecte ha estat un exercici complet que ha cobert la configuració inicial, gestió d'usuaris i vídeos, treball amb dates formatades, i l'ús de components, helpers, layouts i tests per garantir el bon funcionament de l'aplicació.
+# Desenvolupament del 7è Sprint
+
+## Esdeveniments i Notificacions
+
+- S’ha creat l’event ```VideoCreated``` per capturar la creació de vídeos i generar notificacions.
+- S’ha implementat el *listener* ```SendVideoCreatedNotification```, que:
+    - Envia un correu als administradors amb un *Mailable* personalitzat (```VideoCreatedMail```).
+    - Envia una notificació *broadcast* en temps real via Pusher.
+    - Desa la notificació a la base de dades (via ```database```).
+- S’ha creat el fitxer de notificació ```App\Notifications\VideoCreated```, que suporta els canals ```broadcast```, ```database``` i (opcionalment) ```mail```.
+
+## Notificacions en temps real amb Pusher i Laravel Echo
+
+- Integració amb Pusher per gestionar notificacions en temps real.
+- Instal·lats els paquets ```laravel-echo``` i ```pusher-js```.
+- Configurat ```resources/js/bootstrap.js``` amb Laravel Echo.
+- Creat component ```Notifications.vue``` que:
+    - Mostra les notificacions rebudes via Pusher.
+    - Carrega les notificacions de base de dades.
+    - Mostra un missatge quan no hi ha notificacions.
+
+## Vista i Ruta de Notificacions
+
+- S’ha creat la vista Blade per a la pàgina ```/notifications``` que inclou el component Vue.
+- La ruta ```notifications``` només és visible per a usuaris amb permisos de *superadministrador*.
+- Afegit enllaç a la *navbar* protegida amb ```@can('manage-users')```.
+
+## Enviament de correus
+
+- Registre i configuració amb Mailtrap.
+- Creació del *Mailable* personalitzat amb una vista HTML estilitzada (```emails.video_created.blade.php```).
+- S’ha desactivat l’enviament de correus duplicats mantenint només el correu amb el disseny personalitzat.
+
+## Configuració de Broadcast
+
+- Creació manual de ```config/broadcasting.php``` per configurar Pusher com a *driver* per defecte.
+- Configuració de ```.env``` amb les credencials de Pusher.
+
+## Tests
+
+- *Feature tests* a ```VideoNotificationsTest.php```:
+    - ```test_video_created_event_is_dispatched```: comprova que l’event es dispara correctament.
+    - ```test_push_notification_is_sent_when_video_is_created```: comprova que la notificació s’envia via *broadcast*.
+
+## Altres
+
+- Utilització de ```RefreshDatabase``` per evitar afectar la base de dades real.
+- Base de dades de test configurada amb SQLite *in-memory*.
+
+## Conclusió
+
+Durant aquest setè sprint s’ha introduït comunicació reactiva amb notificacions en temps real i correus, controlat per esdeveniments, i s’ha garantit la seguretat mostrant la informació només a usuaris autoritzats. S’ha millorat també la cobertura de tests i la integració amb serveis externs com Mailtrap i Pusher.

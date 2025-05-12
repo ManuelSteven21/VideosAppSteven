@@ -22,7 +22,7 @@ class VideoCreated extends Notification implements ShouldQueue
 
     public function via($notifiable)
     {
-        return ['mail', 'broadcast', 'database'];
+        return ['broadcast', 'database'];
     }
 
     public function toDatabase($notifiable)

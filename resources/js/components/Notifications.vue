@@ -1,7 +1,14 @@
 <template>
     <div class="notifications">
         <h2 class="font-bold text-lg mb-4">Notificacions</h2>
-        <ul class="space-y-2">
+
+        <!-- Missatge si no hi ha notificacions -->
+        <div v-if="notifications.length === 0" class="text-gray-500 italic">
+            No tens cap notificació encara.
+        </div>
+
+        <!-- Llista de notificacions -->
+        <ul v-else class="space-y-2">
             <li v-for="(notification, index) in notifications" :key="index" class="bg-white p-4 rounded shadow">
                 <p class="text-gray-800 font-semibold">📽️ Nou vídeo: {{ notification.data.title }}</p>
                 <p class="text-sm text-gray-500">📅 Publicat: {{ notification.data.published_at }}</p>
@@ -21,12 +28,12 @@ export default {
     mounted() {
         console.log("📦 Component Notifications muntat");
 
-        // Carregar notificacions existents de la base de dades
+        // Carregar notificacions existents
         axios.get('/api/notifications').then(response => {
             this.notifications = response.data;
         });
 
-        // Afegir les noves per temps real
+        // Escoltar notificacions en temps real
         window.Echo.channel('videos')
             .listen('.video.created', (e) => {
                 console.log('🔔 Rebut vídeo:', e);

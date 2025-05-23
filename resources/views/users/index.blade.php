@@ -29,45 +29,51 @@
                 </form>
             </div>
 
-            <!-- Taula d'usuaris -->
-            <div class="overflow-x-auto">
+            <!-- Vista llista mòbil -->
+            <div class="md:hidden p-4 space-y-4">
+                @forelse($users as $user)
+                    <div class="bg-gray-50 rounded-md shadow p-4">
+                        <p class="text-sm font-semibold text-gray-800">{{ $user->name }}</p>
+                        <p class="text-sm text-gray-600">{{ $user->email }}</p>
+                        <div class="flex flex-wrap gap-1 my-2">
+                            @foreach ($user->getRoleNames() as $role)
+                                <span class="px-2 py-1 text-xs font-medium rounded-full bg-gray-200 text-gray-800">{{ ucfirst($role) }}</span>
+                            @endforeach
+                        </div>
+                        <div class="flex justify-end mt-2">
+                            <a href="{{ route('users.show', $user->id) }}" class="text-sm text-red-600 hover:text-red-800 font-medium">
+                                Veure detalls →
+                            </a>
+                        </div>
+                    </div>
+                @empty
+                    <p class="text-center text-gray-500 italic">Encara no hi ha usuaris.</p>
+                @endforelse
+            </div>
+
+            <!-- Vista taula desktop -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                     <tr>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
-                            ID
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Nom
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Email
-                        </th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Rols
-                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">ID</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rols</th>
                     </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                     @foreach ($users as $user)
                         <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                {{ $user->id }}
-                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $user->id }}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <a href="{{ route('users.show', $user->id) }}" class="text-red-600 hover:text-red-900" data-qa="user-detail-link">
-                                    {{ $user->name }}
-                                </a>
+                                <a href="{{ route('users.show', $user->id) }}" class="text-red-600 hover:text-red-900">{{ $user->name }}</a>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ $user->email }}
-                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $user->email }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex flex-wrap gap-2">
                                     @foreach ($user->getRoleNames() as $role)
-                                        <span class="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
-                                        {{ ucfirst($role) }}
-                                    </span>
+                                        <span class="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">{{ ucfirst($role) }}</span>
                                     @endforeach
                                 </div>
                             </td>

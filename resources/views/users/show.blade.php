@@ -4,7 +4,7 @@
     <div class="max-w-7xl mx-auto px-4 py-8">
         <!-- Tarjeta de información del usuario -->
         <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8">
-            <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+            <div class="px-6 py-4 border-b border-gray-200 flex flex-col md:flex-row justify-between md:items-center gap-4">
                 <h1 class="text-2xl font-bold text-gray-800">Detalls de l'Usuari: {{ $user->name }}</h1>
                 <a href="{{ route('users.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                     <svg class="-ml-1 mr-2 h-5 w-5 text-gray-500" viewBox="0 0 24 24" fill="currentColor">
@@ -15,30 +15,30 @@
             </div>
 
             <div class="px-6 py-4">
-                <div class="flex items-start space-x-6">
+                <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
                     <img src="{{ $user->profile_photo_url ?? asset('images/default-avatar.png') }}"
                          alt="{{ $user->name }}"
                          class="w-24 h-24 rounded-full object-cover border-2 border-gray-200">
 
-                    <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                         <div class="space-y-2">
-                            <div class="flex justify-between">
-                                <span class="font-medium text-gray-500">Nom</span>
-                                <span class="text-gray-900">{{ $user->name }}</span>
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Nom</p>
+                                <p class="text-gray-900">{{ $user->name }}</p>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="font-medium text-gray-500">Email</span>
-                                <span class="text-gray-900">{{ $user->email }}</span>
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Email</p>
+                                <p class="text-gray-900">{{ $user->email }}</p>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="font-medium text-gray-500">Super Admin</span>
-                                <span class="text-gray-900">{{ $user->super_admin ? 'Sí' : 'No' }}</span>
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Super Admin</p>
+                                <p class="text-gray-900">{{ $user->super_admin ? 'Sí' : 'No' }}</p>
                             </div>
                         </div>
                         <div class="space-y-2">
-                            <div class="flex justify-between">
-                                <span class="font-medium text-gray-500">Rols</span>
-                                <div class="flex flex-wrap gap-1 justify-end">
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Rols</p>
+                                <div class="flex flex-wrap gap-1">
                                     @foreach ($user->getRoleNames() as $role)
                                         <span class="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
                                             {{ ucfirst($role) }}
@@ -46,13 +46,13 @@
                                     @endforeach
                                 </div>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="font-medium text-gray-500">Creat el</span>
-                                <span class="text-gray-900">{{ $user->created_at->format('d/m/Y H:i') }}</span>
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Creat el</p>
+                                <p class="text-gray-900">{{ $user->created_at->format('d/m/Y H:i') }}</p>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="font-medium text-gray-500">Actualitzat</span>
-                                <span class="text-gray-900">{{ $user->updated_at->format('d/m/Y H:i') }}</span>
+                            <div>
+                                <p class="text-sm text-gray-500 font-medium">Actualitzat</p>
+                                <p class="text-gray-900">{{ $user->updated_at->format('d/m/Y H:i') }}</p>
                             </div>
                         </div>
                     </div>
@@ -60,25 +60,23 @@
             </div>
         </div>
 
-        <!-- Sección de vídeos con estilo grid como en el index -->
+        <!-- Secció de vídeos amb estil grid -->
         <div class="bg-white rounded-lg shadow-md overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-200">
                 <h2 class="text-xl font-semibold text-gray-800">Vídeos de l'Usuari ({{ $user->videos->count() }})</h2>
             </div>
 
             @if($user->videos->isNotEmpty())
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
                     @foreach($user->videos as $video)
                         <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                             <a href="{{ route('videos.show', $video->id) }}" class="block">
-                                <!-- Miniaturas -->
                                 <div class="relative pb-[56.25%]">
                                     @if($video->thumbnail && Storage::exists('public/'.$video->thumbnail))
                                         <img src="{{ asset('storage/' . $video->thumbnail) }}"
                                              alt="Miniatura de {{ $video->title }}"
                                              class="absolute h-full w-full object-cover">
                                     @else
-                                        <!-- Mostrar el iframe directamente si no hay miniatura -->
                                         <iframe
                                             src="https://www.youtube.com/embed/{{ $video->url_id }}?autoplay=0&showinfo=0&controls=0"
                                             class="absolute h-full w-full"
@@ -87,12 +85,9 @@
                                         </iframe>
                                     @endif
                                 </div>
-                                <!-- Detalles del vídeo -->
                                 <div class="p-4">
                                     <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ $video->title }}</h3>
                                     <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ $video->description }}</p>
-
-                                    <!-- Información del autor -->
                                     <div class="flex items-center mt-3">
                                         <img src="{{ $user->profile_photo_url ?? 'https://ui-avatars.com/api/?name='.urlencode($user->name) }}"
                                              alt="{{ $user->name }}"
